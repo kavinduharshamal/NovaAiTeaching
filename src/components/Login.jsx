@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Switch, FormControlLabel } from "@mui/material";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import LogoWhite from "./LogoWhite";
 
 const Login = () => {
@@ -9,6 +11,7 @@ const Login = () => {
   const [usernameActive, setUsernameActive] = useState(false);
   const [passwordActive, setPasswordActive] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleUsernameFocus = () => {
     setUsernameActive(true);
@@ -42,20 +45,48 @@ const Login = () => {
         const data = await response.json();
 
         if (response.ok) {
-          // Successful login, redirect or handle user data
+          // Successful teacher login
           console.log("Login successful:", data);
-          // Redirect to input data page or wherever necessary
-          window.location.href = "/inputdata";
+          const teacherId = data.id; // Assuming the ID is in the response
+          window.location.href = `http://localhost:5173/dashboard/Teacher/${teacherId}`;
         } else {
-          // Handle error message from server
           setErrorMessage(data.message || "Invalid email or password");
         }
       } catch (error) {
-        console.error("Error during login:", error);
+        console.error("Error during teacher login:", error);
         setErrorMessage("An error occurred during login");
       }
-    } else if (username === "student" && password === "student") {
-      window.location.href = "/";
+    } else if (userType === "student") {
+      // Student login API call
+      try {
+        const response = await fetch(
+          "https://novaainew-dvfve3g7bqbneqbv.canadacentral-01.azurewebsites.net/api/Student/login",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: username,
+              password: password,
+            }),
+          }
+        );
+
+        const data = await response.json();
+
+        if (response.ok) {
+          // Successful student login
+          console.log("Student login successful:", data);
+          const batchId = data.batchId;
+          window.location.href = `/Student/${batchId}`; // Redirecting to student's batch page
+        } else {
+          setErrorMessage(data.message || "Invalid email or password");
+        }
+      } catch (error) {
+        console.error("Error during student login:", error);
+        setErrorMessage("An error occurred during login");
+      }
     } else {
       setErrorMessage("Invalid username or password");
     }
@@ -119,19 +150,40 @@ const Login = () => {
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
-        <input
-          type="password"
-          placeholder="Password"
-          onFocus={handlePasswordFocus}
-          onBlur={() => setPasswordActive(false)}
-          style={{ width: "150%", height: "60px" }}
-          className={`px-4 py-2 border ${
-            passwordActive ? "border-blue-500" : "border-gray-300"
-          } rounded-md focus:outline-none focus:border-blue-500`}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
+
+        <div style={{ position: "relative", width: "150%", height: "60px" }}>
+          <input
+            type={showPassword ? "text" : "password"}
+            placeholder="Password"
+            onFocus={handlePasswordFocus}
+            onBlur={() => setPasswordActive(false)}
+            style={{ width: "100%", height: "60px" }}
+            className={`px-4 py-2 border ${
+              passwordActive ? "border-blue-500" : "border-gray-300"
+            } rounded-md focus:outline-none focus:border-blue-500`}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            style={{
+              position: "absolute",
+              top: "50%",
+              right: "10px",
+              transform: "translateY(-50%)",
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+            }}
+          >
+            {showPassword ? <VisibilityOff /> : <Visibility />}
+          </button>
+        </div>
+
+        {errorMessage && (
+          <p className="text-red-500 my-2 text-sm font-bold">{errorMessage}</p>
+        )}
         <button
           onClick={handleLogin}
           style={{ width: "150%", height: "60px", backgroundColor: "#7FC7D9" }}

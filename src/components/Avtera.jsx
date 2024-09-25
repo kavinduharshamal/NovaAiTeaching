@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useAnimations, useFBX, useGLTF } from "@react-three/drei";
-import { useControls } from "leva";
 import { useFrame, useLoader } from "@react-three/fiber";
 import * as THREE from "three";
 
@@ -22,100 +21,112 @@ const currentSegment = segments[segments.length - 1];
 const script = currentSegment;
 
 export function Avtera(props) {
-  const { playAudio, headFlw } = useControls({
-    playAudio: false,
-    headFlw: false,
-  });
+  const { playAudio } = props;
 
   const audio = useMemo(() => new Audio(`/audio/${script}.mp3`), [script]);
-  const jsonFile = useLoader(THREE.FileLoader, `audio/${script}.json`);
+  console.log(audio);
+  const jsonFile = useLoader(THREE.FileLoader, `/audio/${script}.json`);
   const lipsync = JSON.parse(jsonFile);
 
   const { nodes, materials } = useGLTF("models/6565ab44e0834c9ab37a141c.glb");
   const { animations: idleAnimation } = useFBX("/animation/Idle.fbx");
-  const { animations: talkingAnimation } = useFBX("animation/Talking.fbx");
-  const { animations: talkingAnimation_1 } = useFBX("animation/Talking_1.fbx");
+  const { animations: talkingAnimation1 } = useFBX("/animation/Walking.fbx");
+  const { animations: talkingAnimation2 } = useFBX("/animation/Waving.fbx");
 
-  idleAnimation[0].name = "Idle";
-  talkingAnimation[0].name = "Talking";
-  talkingAnimation_1[0].name = "Talking_1";
+  // Set animation names
+  idleAnimation[0].name = "Idle2";
+  talkingAnimation1[0].name = "Talking1";
+  talkingAnimation2[0].name = "Talking2";
 
-  const [animation, setAnimation] = useState("Idle");
+  const [animation, setAnimation] = useState("Idle2");
   const group = useRef();
   const { actions } = useAnimations(
-    [idleAnimation[0], talkingAnimation[0], talkingAnimation_1[0]],
+    [idleAnimation[0], talkingAnimation1[0], talkingAnimation2[0]],
     group
   );
 
-  // Set initial rotation to face the camera
+  // Timer for switching between talking animations
+  useEffect(() => {
+    let switchInterval;
+
+    if (playAudio) {
+      // Start alternating talking animations every 3 seconds
+      switchInterval = setInterval(() => {
+        setAnimation((prev) => (prev === "Talking1" ? "Talking2" : "Talking1"));
+      }, 3000); // Switch every 3 seconds
+    }
+
+    return () => {
+      clearInterval(switchInterval); // Clear the interval when animation stops
+    };
+  }, [playAudio]);
+
+  // Ensure the model always faces the camera
   useEffect(() => {
     if (group.current) {
-      group.current.rotation.x = -Math.PI / 2; // Adjust as needed to face the camera
+      // group.current.rotation.set(0, Math.PI / 2, 0); // Face camera if needed
     }
   }, []);
 
-  // Keep the model facing the camera during every frame
+  // Morph target for lipsync
   useFrame(() => {
-    if (group.current) {
-      group.current.rotation.x = -Math.PI / 2; // Keep facing the camera
-    }
-    const currentAudioTime = audio.currentTime;
-    Object.values(corresponding).forEach((value) => {
-      nodes.Wolf3D_Head.morphTargetInfluences[
-        nodes.Wolf3D_Head.morphTargetDictionary[value]
-      ] = 0;
-      nodes.Wolf3D_Teeth.morphTargetInfluences[
-        nodes.Wolf3D_Teeth.morphTargetDictionary[value]
-      ] = 0;
-    });
-
-    for (let i = 0; i < lipsync.mouthCues.length; i++) {
-      const mouthCue = lipsync.mouthCues[i];
-      if (
-        currentAudioTime >= mouthCue.start &&
-        currentAudioTime <= mouthCue.end
-      ) {
+    if (group.current && playAudio) {
+      const currentAudioTime = audio.currentTime;
+      Object.values(corresponding).forEach((value) => {
         nodes.Wolf3D_Head.morphTargetInfluences[
-          nodes.Wolf3D_Head.morphTargetDictionary[corresponding[mouthCue.value]]
-        ] = 1;
+          nodes.Wolf3D_Head.morphTargetDictionary[value]
+        ] = 0;
         nodes.Wolf3D_Teeth.morphTargetInfluences[
-          nodes.Wolf3D_Teeth.morphTargetDictionary[
-            corresponding[mouthCue.value]
-          ]
-        ] = 1;
-        break;
+          nodes.Wolf3D_Teeth.morphTargetDictionary[value]
+        ] = 0;
+      });
+
+      // Update mouth cues during audio
+      for (let i = 0; i < lipsync.mouthCues.length; i++) {
+        const mouthCue = lipsync.mouthCues[i];
+        if (
+          currentAudioTime >= mouthCue.start &&
+          currentAudioTime <= mouthCue.end
+        ) {
+          nodes.Wolf3D_Head.morphTargetInfluences[
+            nodes.Wolf3D_Head.morphTargetDictionary[
+              corresponding[mouthCue.value]
+            ]
+          ] = 1;
+          nodes.Wolf3D_Teeth.morphTargetInfluences[
+            nodes.Wolf3D_Teeth.morphTargetDictionary[
+              corresponding[mouthCue.value]
+            ]
+          ] = 1;
+          break;
+        }
       }
     }
   });
 
+  // Control animations based on audio play
   useEffect(() => {
     if (playAudio) {
       audio.play();
-
-      // Play idle animation first
-      setAnimation("Idle");
-
+      setAnimation("Talking1");
       audio.onended = () => {
-        setAnimation("Idle");
+        setAnimation("Idle2");
       };
-
-      // Wait for idle animation to finish, then play talking animation
-      const idleAnimationDuration = idleAnimation[0].duration; // Get the duration of idle animation
-      setTimeout(() => {
-        if (playAudio) {
-          setAnimation("Talking");
-        }
-      }, idleAnimationDuration * 1000); // Convert seconds to milliseconds
     } else {
       audio.pause();
-      setAnimation("Idle");
+      setAnimation("Idle2");
     }
   }, [playAudio]);
 
+  // Ensure the correct animation is playing
   useEffect(() => {
-    actions[animation].reset().fadeIn(0.5).play();
-    return () => actions[animation].fadeOut(0.5);
-  }, [animation]);
+    if (actions[animation]) {
+      actions[animation].play();
+    }
+    return () => {
+      if (actions[animation]) actions[animation].stop(); // Stop the animation when unmounted
+    };
+  }, [animation, actions]);
 
   return (
     <group {...props} dispose={null} ref={group}>
