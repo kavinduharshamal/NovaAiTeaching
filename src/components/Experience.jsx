@@ -47,7 +47,7 @@ const buttonStyleplayButton = {
 
 export const Experience = (props) => {
   const [playAudio, setPlayAudio] = useState(false); // Add state for controlling play/pause
-  const textureMap = useTexture(props.texture);
+  const textureMap = useTexture(props.texture); // Load texture from props
   const viewport = useThree((state) => state.viewport);
 
   const togglePlay = () => {
@@ -58,24 +58,26 @@ export const Experience = (props) => {
     <>
       <OrbitControls
         enableZoom={false}
-        enablePan={true}
+        enablePan={false}
         enableRotate={false}
         zoomSpeed={0.5} // Adjust the zoom speed
         panSpeed={0.3} // Adjust the pan speed
         rotateSpeed={0.4}
       />
+      {/* Pass textureMap as prop to Avtera */}
       <Avtera
         position={[0, -3, 5]}
         scale={2}
         rotation={[-Math.PI / 2, 0, 0]}
         playAudio={playAudio} // Pass playAudio state to Avtera
+        textureMap={textureMap} // Pass textureMap to Avtera
       />
       <Environment preset="sunset" />
 
-      <mesh>
+      {/* <mesh>
         <planeGeometry args={[viewport.width, viewport.height]} />
         <meshBasicMaterial map={textureMap} />
-      </mesh>
+      </mesh> */}
 
       {/* Material-UI Home Button */}
       <Html position={[viewport, viewport, 0]}>

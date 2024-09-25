@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useAnimations, useFBX, useGLTF } from "@react-three/drei";
-import { useFrame, useLoader } from "@react-three/fiber";
+import { useAnimations, useFBX, useGLTF, useTexture } from "@react-three/drei"; // useTexture hook for texture loading
+import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
+import { easing } from "maath"; // Use easing library to smooth animations
 
 const corresponding = {
   A: "viseme_PP",
@@ -15,25 +16,44 @@ const corresponding = {
   X: "viseme_PP",
 };
 
-const currentPath = window.location.pathname;
-const segments = currentPath.split("/");
-const currentSegment = segments[segments.length - 1];
-const script = currentSegment;
-
 export function Avtera(props) {
   const { playAudio } = props;
+  const [currentFileIndex, setCurrentFileIndex] = useState(1);
+  const [lipsync, setLipsync] = useState(null);
+  const viewport = useThree((state) => state.viewport);
 
-  const audio = useMemo(() => new Audio(`/audio/${script}.mp3`), [script]);
-  console.log(audio);
-  const jsonFile = useLoader(THREE.FileLoader, `/audio/${script}.json`);
-  const lipsync = JSON.parse(jsonFile);
+  const audio = useMemo(
+    () => new Audio(`/audio/LectureOne/${currentFileIndex}.mp3`),
+    [currentFileIndex]
+  );
+
+  // Load texture dynamically based on current audio index (1.png, 2.png, etc.)
+  const textureMap = useTexture(`/audio/LectureOne/${currentFileIndex}.png`);
+
+  useEffect(() => {
+    const loader = new THREE.FileLoader();
+    loader.load(
+      `/audio/LectureOne/${currentFileIndex}.json`,
+      (data) => {
+        try {
+          const parsedData = JSON.parse(data);
+          setLipsync(parsedData);
+        } catch (error) {
+          console.error("Error parsing JSON:", error);
+        }
+      },
+      undefined,
+      (error) => {
+        console.error("Error loading JSON file:", error);
+      }
+    );
+  }, [currentFileIndex]);
 
   const { nodes, materials } = useGLTF("models/6565ab44e0834c9ab37a141c.glb");
   const { animations: idleAnimation } = useFBX("/animation/Idle.fbx");
   const { animations: talkingAnimation1 } = useFBX("/animation/Walking.fbx");
   const { animations: talkingAnimation2 } = useFBX("/animation/Waving.fbx");
 
-  // Set animation names
   idleAnimation[0].name = "Idle2";
   talkingAnimation1[0].name = "Talking1";
   talkingAnimation2[0].name = "Talking2";
@@ -45,32 +65,28 @@ export function Avtera(props) {
     group
   );
 
-  // Timer for switching between talking animations
-  useEffect(() => {
-    let switchInterval;
+  const fadeToAnimation = (from, to, duration = 0.4) => {
+    if (actions[from]) actions[from].fadeOut(duration);
+    if (actions[to]) actions[to].fadeIn(duration).reset().play();
+  };
 
+  useEffect(() => {
+    let animationInterval;
     if (playAudio) {
-      // Start alternating talking animations every 3 seconds
-      switchInterval = setInterval(() => {
-        setAnimation((prev) => (prev === "Talking1" ? "Talking2" : "Talking1"));
-      }, 3000); // Switch every 3 seconds
+      fadeToAnimation("Idle2", "Talking1", 0.3);
+      setAnimation("Talking1");
+    } else {
+      fadeToAnimation("Talking1", "Idle2", 0.3);
+      setAnimation("Idle2");
     }
 
     return () => {
-      clearInterval(switchInterval); // Clear the interval when animation stops
+      clearInterval(animationInterval);
     };
-  }, [playAudio]);
+  }, [playAudio, actions]);
 
-  // Ensure the model always faces the camera
-  useEffect(() => {
-    if (group.current) {
-      // group.current.rotation.set(0, Math.PI / 2, 0); // Face camera if needed
-    }
-  }, []);
-
-  // Morph target for lipsync
   useFrame(() => {
-    if (group.current && playAudio) {
+    if (group.current && playAudio && lipsync) {
       const currentAudioTime = audio.currentTime;
       Object.values(corresponding).forEach((value) => {
         nodes.Wolf3D_Head.morphTargetInfluences[
@@ -81,9 +97,7 @@ export function Avtera(props) {
         ] = 0;
       });
 
-      // Update mouth cues during audio
-      for (let i = 0; i < lipsync.mouthCues.length; i++) {
-        const mouthCue = lipsync.mouthCues[i];
+      lipsync.mouthCues.forEach((mouthCue) => {
         if (
           currentAudioTime >= mouthCue.start &&
           currentAudioTime <= mouthCue.end
@@ -98,38 +112,29 @@ export function Avtera(props) {
               corresponding[mouthCue.value]
             ]
           ] = 1;
-          break;
         }
-      }
+      });
     }
   });
 
-  // Control animations based on audio play
   useEffect(() => {
     if (playAudio) {
       audio.play();
-      setAnimation("Talking1");
       audio.onended = () => {
-        setAnimation("Idle2");
+        fadeToAnimation("Talking1", "Idle2", 0.5);
+        setCurrentFileIndex((prev) => prev + 1);
       };
     } else {
       audio.pause();
       setAnimation("Idle2");
     }
-  }, [playAudio]);
-
-  // Ensure the correct animation is playing
-  useEffect(() => {
-    if (actions[animation]) {
-      actions[animation].play();
-    }
-    return () => {
-      if (actions[animation]) actions[animation].stop(); // Stop the animation when unmounted
-    };
-  }, [animation, actions]);
+  }, [playAudio, audio]);
 
   return (
     <group {...props} dispose={null} ref={group}>
+      {/* Background Plane */}
+
+      {/* Character */}
       <primitive object={nodes.Hips} />
       <skinnedMesh
         name="EyeLeft"
@@ -188,6 +193,11 @@ export function Avtera(props) {
         material={materials.Wolf3D_Hair}
         skeleton={nodes.Wolf3D_Hair.skeleton}
       />
+      {/* Display the texture as the background plane */}
+      <mesh position={[0, 0.4, 1.5]} rotation={[Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[viewport.width / 4.2, viewport.height / 4.2]} />
+        <meshBasicMaterial map={textureMap} />
+      </mesh>
     </group>
   );
 }
