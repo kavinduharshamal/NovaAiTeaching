@@ -1,0 +1,43 @@
+/* Navbar.css */
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Arial", sans-serif;
+}
+
+.navbar {
+  background-color: #333; /* Choose your background color */
+}
+
+.nav-list {
+  list-style: none;
+  padding: 20px;
+  margin: 0;
+  width: 20%;
+}
+
+.nav-list li {
+  margin-bottom: 10px; /* Adjust the spacing between navbar items */
+}
+
+.nav-list a {
+  text-decoration: none;
+  color: white; /* Choose your text color */
+  font-size: 16px;
+  font-weight: bold;
+  padding: 10px;
+  transition: color 0.3s ease-in-out; /* Smooth transition for color change */
+  display: block; /* Make each item a block to stack vertically */
+}
+
+.nav-list a:hover {
+  color: #ff7f50; /* Change the color on hover */
+}
+
+.box {
+  background-color: #ff7f50; /* Choose the background color for the 'box' class */
+  color: white; /* Choose the text color for the 'box' class */
+  padding: 8px 12px;
+  border-radius: 5px;
+}
