@@ -42,20 +42,48 @@ const Login = () => {
         const data = await response.json();
 
         if (response.ok) {
-          // Successful login, redirect or handle user data
+          // Successful teacher login
           console.log("Login successful:", data);
-          // Redirect to input data page or wherever necessary
-          window.location.href = "/inputdata";
+          const teacherId = data.id; // Assuming the ID is in the response
+          window.location.href = `http://localhost:5173/dashboard/Teacher/${teacherId}`;
         } else {
-          // Handle error message from server
           setErrorMessage(data.message || "Invalid email or password");
         }
       } catch (error) {
-        console.error("Error during login:", error);
+        console.error("Error during teacher login:", error);
         setErrorMessage("An error occurred during login");
       }
-    } else if (username === "student" && password === "student") {
-      window.location.href = "/";
+    } else if (userType === "student") {
+      // Student login API call
+      try {
+        const response = await fetch(
+          "https://novaainew-dvfve3g7bqbneqbv.canadacentral-01.azurewebsites.net/api/Student/login", // Update this URL accordingly
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: username,
+              password: password,
+            }),
+          }
+        );
+
+        const data = await response.json();
+
+        if (response.ok) {
+          // Successful student login
+          console.log("Student login successful:", data);
+          const batchId = data.batchId;
+          window.location.href = `/Student/${batchId}`; // Redirecting to student's batch page
+        } else {
+          setErrorMessage(data.message || "Invalid email or password");
+        }
+      } catch (error) {
+        console.error("Error during student login:", error);
+        setErrorMessage("An error occurred during login");
+      }
     } else {
       setErrorMessage("Invalid username or password");
     }
