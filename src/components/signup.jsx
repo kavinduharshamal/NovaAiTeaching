@@ -27,6 +27,12 @@ const SignIn = () => {
       return;
     }
 
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+      setErrorMessage("Invalid email address");
+      return;
+    }
+
     if (password !== confirmPassword) {
       setErrorMessage("Passwords do not match");
       return;
@@ -147,7 +153,7 @@ const SignIn = () => {
               type={showPassword ? "text" : "password"}
               placeholder="Password"
               style={{ width: "100%", height: "60px" }}
-              className={`px-4 py-2 border rounded-md focus:outline-none focus:border-blue-500 `}
+              className={`px-4 py-2 border my-2 rounded-md focus:outline-none focus:border-blue-500 `}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -179,7 +185,7 @@ const SignIn = () => {
               type={showPassword ? "text" : "password"}
               placeholder="Confirm Password"
               style={{ width: "100%", height: "60px" }}
-              className={`px-4 py-2 border rounded-md focus:outline-none focus:border-blue-500`}
+              className={`px-4 py-2 border my-2 rounded-md focus:outline-none focus:border-blue-500`}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
             />
