@@ -5,7 +5,7 @@
     "ModuleName": "dwa",
     "Time": 1.56,
     "Batch": "dasd",
-    "texture": "texture/Screenshot 2024-02-21 at 00.00.12.png"
+    "texture": "texture/logoBlack.png"
   },
   {
     "id": "test1212",
@@ -13,7 +13,7 @@
     "ModuleName": "23",
     "Time": 1.09,
     "Batch": "1321",
-    "texture": "texture/images.jpeg"
+    "texture": "texture/logoBlack.png"
   },
   {
     "id": "test1212",
@@ -21,6 +21,6 @@
     "ModuleName": "23",
     "Time": 17.68,
     "Batch": "1321",
-    "texture": "texture/images.jpeg"
+    "texture": "texture/logoBlack.png"
   }
 ]
