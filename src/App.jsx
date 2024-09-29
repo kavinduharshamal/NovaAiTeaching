@@ -19,6 +19,8 @@ import img1 from "./assets/on.png";
 import img2 from "./assets/off.png";
 import { ExperienceHome } from "./components/ExperienceHome";
 import LogoWhite from "./components/LogoWhite";
+import * as THREE from "three";
+
 function App() {
   const [isFeedbackVisible, setIsFeedbackVisible] = useState(true);
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
@@ -220,7 +222,12 @@ function App() {
         {/* Use map to create routes for each record */}
         {reco.map((record) => (
           <Route key={record.id} path={`/${record.id}`}>
-            <Canvas shadows camera={{ position: [0, 0, 8], fov: 50 }}>
+            <Canvas
+              shadows
+              shadowMap
+              dpr={[1, 2]}
+              camera={{ position: [0, 0, 8], fov: 50 }}
+            >
               <color attach="background" args={["#ececec"]} />
               <Suspense fallback={null}>
                 <Experience texture={record.texture} />
