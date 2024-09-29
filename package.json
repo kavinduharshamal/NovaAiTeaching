@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
+    "start": "nodemon --ignore public/audio scriptNew.js",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
@@ -14,6 +15,7 @@
     "@emotion/styled": "^11.13.0",
     "@mui/icons-material": "^6.1.1",
     "@mui/material": "^6.1.1",
+    "@react-spring/three": "^9.7.4",
     "@react-three/drei": "^9.97.5",
     "@react-three/fiber": "8.13.3",
     "@types/three": "0.152.1",

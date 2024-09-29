@@ -57,9 +57,9 @@ export const Experience = (props) => {
   return (
     <>
       <OrbitControls
-        enableZoom={false}
-        enablePan={false}
-        enableRotate={false}
+        enableZoom={true}
+        enablePan={true}
+        enableRotate={true}
         zoomSpeed={0.5} // Adjust the zoom speed
         panSpeed={0.3} // Adjust the pan speed
         rotateSpeed={0.4}
