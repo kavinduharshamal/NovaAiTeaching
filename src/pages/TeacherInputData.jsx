@@ -26,8 +26,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 
-//const API_KEY = process.env.REACT_APP_OPENAI_API_KEY;
-const API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
+const API_KEY =
+  "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";
 
 const systemMessage = {
   role: "system",
