@@ -24,7 +24,7 @@ export function Avtera(props) {
   const [maxFileIndex, setMaxFileIndex] = useState(0);
   const [audioStopped, setAudioStopped] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  const folderName = "20_MathsII_21";
+  const folderName = "20121_ranm,i_sarani";
   const initialTexture = "/texture/9875308.jpg";
   const fileMusic = "audio/hi_ranmi_213/1.mp3";
   const viewport = useThree((state) => state.viewport);

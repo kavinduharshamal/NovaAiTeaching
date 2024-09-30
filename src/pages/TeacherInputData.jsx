@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -25,6 +25,7 @@ import "react-resizable/css/styles.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
+import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 
 const API_KEY =
   "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";
@@ -39,6 +40,7 @@ export function TeacherInputData() {
   const [contentFields, setContentFields] = useState([
     { id: 1, content: "", file: null },
   ]);
+  const { teacherId, ModuleId } = useParams();
   const [moduleCode, setModuleCode] = useState("");
   const [nameOfLecture, setNameOfLecture] = useState("");
   const [batchId, setBatchId] = useState("");
@@ -53,6 +55,30 @@ export function TeacherInputData() {
   const [isTyping, setIsTyping] = useState(false);
   const [inputData, setInputData] = useState(""); // State for input message
   const [showPopup, setShowPopup] = useState(true); // Show chat on load
+
+  useEffect(() => {
+    console.log("Teacher ID:", teacherId);
+    console.log("Module ID:", ModuleId);
+
+    // Fetch module details
+    const fetchModuleDetails = async () => {
+      try {
+        const response = await axios.get(
+          `https://novaainew-dvfve3g7bqbneqbv.canadacentral-01.azurewebsites.net/api/Module/${ModuleId}`
+        );
+
+        if (response.data) {
+          setModuleCode(response.data.moduleCode);
+          setBatchId(response.data.batchNumber);
+        }
+      } catch (error) {
+        console.error("Failed to fetch module details:", error);
+        toast.error("Failed to fetch module details.");
+      }
+    };
+
+    fetchModuleDetails();
+  }, [teacherId, ModuleId]);
 
   const addContentField = () => {
     if (contentFields.length < 5) {
@@ -82,6 +108,7 @@ export function TeacherInputData() {
   const handleGenerateLecture = async () => {
     setIsLoading(true); // Show loading indicator
 
+    // Prepare formData for the first API call
     const formData = new FormData();
     formData.append("moduleCode", moduleCode);
     formData.append("nameOfLecture", nameOfLecture);
@@ -104,7 +131,8 @@ export function TeacherInputData() {
     });
 
     try {
-      const response = await axios.post(
+      // First API call
+      const response1 = await axios.post(
         "http://localhost:3000/generateLecture",
         formData,
         {
@@ -114,8 +142,38 @@ export function TeacherInputData() {
         }
       );
       toast.success("Lecture generated successfully!");
+
+      // Prepare payload for the second API call
+      const urls = contentFields
+        .filter((field) => field.file !== null)
+        .map((field) => URL.createObjectURL(field.file));
+
+      const payload = {
+        id: 0,
+        moduleId: ModuleId,
+        topicName: nameOfLecture,
+        url1: urls[0] || "",
+        url2: urls[1] || "",
+        url3: urls[2] || "",
+        url4: urls[3] || "",
+      };
+
+      // Second API call
+      const response2 = await axios.post(
+        "https://novaainew-dvfve3g7bqbneqbv.canadacentral-01.azurewebsites.net/api/Topic",
+        payload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      toast.success("Topic data sent successfully!");
+      console.log("API Response:", response2.data);
     } catch (error) {
-      toast.error("Failed to generate lecture.");
+      toast.error("Failed to generate lecture or send topic data.");
+      console.error("API Error:", error);
     } finally {
       setIsLoading(false); // Hide loading indicator
     }
