@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useAnimations, useFBX, useGLTF, useTexture } from "@react-three/drei"; // useTexture hook for texture loading
+import { useAnimations, useFBX, useGLTF, useTexture } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
+import { useSpring, animated } from "@react-spring/three";
 import * as THREE from "three";
-import { easing } from "maath"; // Use easing library to smooth animations
+import { FloorFBX } from "./FloorFBX";
 
 const corresponding = {
   A: "viseme_PP",
@@ -20,20 +21,53 @@ export function Avtera(props) {
   const { playAudio } = props;
   const [currentFileIndex, setCurrentFileIndex] = useState(1);
   const [lipsync, setLipsync] = useState(null);
+  const [maxFileIndex, setMaxFileIndex] = useState(0);
+  const [audioStopped, setAudioStopped] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const folderName = "20_MathsII_21";
+  const initialTexture = "/texture/9875308.jpg";
+  const fileMusic = "audio/hi_ranmi_213/1.mp3";
   const viewport = useThree((state) => state.viewport);
 
-  const audio = useMemo(
-    () => new Audio(`/audio/LectureOne/${currentFileIndex}.mp3`),
-    [currentFileIndex]
-  );
+  const animationRef = useRef("Idle2");
 
-  // Load texture dynamically based on current audio index (1.png, 2.png, etc.)
-  const textureMap = useTexture(`/audio/LectureOne/${currentFileIndex}.png`);
+  useEffect(() => {
+    // Fetch the maxFileIndex from the API
+    const fetchMaxFileIndex = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/countAudioFiles?fileName=${folderName}`
+        );
+        const data = await response.json();
+        setMaxFileIndex(data.audioFileCount);
+      } catch (error) {
+        console.error("Error fetching maxFileIndex:", error);
+      }
+    };
+
+    fetchMaxFileIndex();
+  }, []);
+
+  const audio = useMemo(() => {
+    const audioElement = new Audio(
+      `/audio/${folderName}/${currentFileIndex}.mp3`
+    );
+    audioElement.onerror = () => {
+      console.error(`Error loading audio: ${currentFileIndex}.mp3`);
+      return fileMusic;
+    };
+    return audioElement;
+  }, [currentFileIndex]);
+
+  // Load texture dynamically based on whether play has been pressed
+  const textureMap = useTexture(
+    isPlaying ? `/audio/${folderName}/${currentFileIndex}.png` : initialTexture
+  );
 
   useEffect(() => {
     const loader = new THREE.FileLoader();
     loader.load(
-      `/audio/LectureOne/${currentFileIndex}.json`,
+      `/audio/${folderName}/${currentFileIndex}.json`,
       (data) => {
         try {
           const parsedData = JSON.parse(data);
@@ -44,7 +78,12 @@ export function Avtera(props) {
       },
       undefined,
       (error) => {
-        console.error("Error loading JSON file:", error);
+        console.error(
+          `Error loading JSON file: No file found for ${currentFileIndex}.json`
+        );
+        // Fallback: Return to idle animation on error
+        fadeToAnimation("Talking", "Idle2", 0.5);
+        animationRef.current = "Idle2";
       }
     );
   }, [currentFileIndex]);
@@ -53,40 +92,106 @@ export function Avtera(props) {
   const { animations: idleAnimation } = useFBX("/animation/Idle.fbx");
   const { animations: talkingAnimation1 } = useFBX("/animation/Walking.fbx");
   const { animations: talkingAnimation2 } = useFBX("/animation/Waving.fbx");
+  const { animations: talkingAnimation } = useFBX("/animation/Talking2.fbx");
 
+  // Assign animation names
   idleAnimation[0].name = "Idle2";
   talkingAnimation1[0].name = "Talking1";
   talkingAnimation2[0].name = "Talking2";
+  talkingAnimation[0].name = "Talking";
 
-  const [animation, setAnimation] = useState("Idle2");
-  const group = useRef();
+  const characterGroup = useRef();
+  const meshGroup = useRef();
+
+  // Attach animations to characterGroup using `useAnimations`
   const { actions } = useAnimations(
-    [idleAnimation[0], talkingAnimation1[0], talkingAnimation2[0]],
-    group
+    [
+      idleAnimation[0],
+      //talkingAnimation1[0],
+      talkingAnimation2[0],
+      talkingAnimation[0],
+    ],
+    characterGroup
   );
 
   const fadeToAnimation = (from, to, duration = 0.4) => {
     if (actions[from]) actions[from].fadeOut(duration);
-    if (actions[to]) actions[to].fadeIn(duration).reset().play();
+    if (actions[to]) {
+      console.log(`Changing animation from ${from} to ${to}`);
+      actions[to].reset().fadeIn(duration).play();
+    }
   };
 
+  // Smooth animation for the character using react-spring
+  const characterSpring = useSpring({
+    position: isPlaying ? [2, -1.5, 4] : [0, -1.5, 6], // Adjusted character position when playing
+    rotation: isPlaying ? [-Math.PI / 2, 0, -0.6] : [-Math.PI / 2, 0, 0], // Adjusted rotation for the character
+    config: { duration: 1000 },
+  });
+
+  // Smooth animation for the mesh (background texture plane)
+  const meshSpring = useSpring({
+    position: isPlaying ? [0, -3, 2] : [0, -3, 5], // Adjusted mesh position
+    rotation: isPlaying ? [-Math.PI / 2, 0, Math.PI / 6] : [-Math.PI / 2, 0, 0], // Adjusted rotation for the mesh
+    config: { duration: 1000 },
+  });
+
   useEffect(() => {
-    let animationInterval;
-    if (playAudio) {
+    if (playAudio && !audioStopped) {
+      setIsPlaying(true);
       fadeToAnimation("Idle2", "Talking1", 0.3);
-      setAnimation("Talking1");
+      animationRef.current = "Talking1";
+      audio.play();
+      audio.onended = () => {
+        if (currentFileIndex < maxFileIndex) {
+          setCurrentFileIndex((prev) => prev + 1);
+        } else {
+          console.log("Reached the last file.");
+          fadeToAnimation(animationRef.current, "Idle2", 0.5);
+          animationRef.current = "Idle2";
+          audio.pause();
+          audio.currentTime = 0;
+          setAudioStopped(true);
+        }
+      };
+    } else if (audioStopped) {
+      fadeToAnimation(animationRef.current, "Idle2", 0.3);
+      animationRef.current = "Idle2";
     } else {
-      fadeToAnimation("Talking1", "Idle2", 0.3);
-      setAnimation("Idle2");
+      setIsPlaying(false);
+      fadeToAnimation(animationRef.current, "Idle2", 0.3);
+      animationRef.current = "Idle2";
+      audio.pause();
+    }
+  }, [playAudio, audio, currentFileIndex, maxFileIndex, audioStopped, actions]);
+
+  useEffect(() => {
+    // Play the initial idle animation when the component is mounted
+    if (actions && actions["Idle2"]) {
+      actions["Idle2"].reset().play();
     }
 
-    return () => {
-      clearInterval(animationInterval);
-    };
-  }, [playAudio, actions]);
+    // Animation sequence every 5 seconds
+    const intervalId = setInterval(() => {
+      if (isPlaying) {
+        const nextAnimation =
+          animationRef.current === "Talking1"
+            ? "Talking2"
+            : animationRef.current === "Talking2"
+            ? "Talking"
+            : "Talking1";
+
+        fadeToAnimation(animationRef.current, nextAnimation, 0.4);
+        animationRef.current = nextAnimation;
+      }
+    }, 5000);
+
+    // Clean up the interval on component unmount
+    return () => clearInterval(intervalId);
+  }, [actions, isPlaying]);
 
   useFrame(() => {
-    if (group.current && playAudio && lipsync) {
+    if (characterGroup.current && playAudio && lipsync) {
       const currentAudioTime = audio.currentTime;
       Object.values(corresponding).forEach((value) => {
         nodes.Wolf3D_Head.morphTargetInfluences[
@@ -117,88 +222,118 @@ export function Avtera(props) {
     }
   });
 
-  useEffect(() => {
-    if (playAudio) {
-      audio.play();
-      audio.onended = () => {
-        fadeToAnimation("Talking1", "Idle2", 0.5);
-        setCurrentFileIndex((prev) => prev + 1);
-      };
-    } else {
-      audio.pause();
-      setAnimation("Idle2");
-    }
-  }, [playAudio, audio]);
-
   return (
-    <group {...props} dispose={null} ref={group}>
-      {/* Background Plane */}
+    <>
+      {/* Animated Mesh (Background Texture Plane) */}
+      <animated.group
+        {...props}
+        dispose={null}
+        ref={meshGroup}
+        position={meshSpring.position} // Animated position for the mesh
+        rotation={meshSpring.rotation} // Animated rotation for the mesh
+        castShadow
+        receiveShadow
+      >
+        <mesh
+          position={[0, 0.4, 1.6]}
+          rotation={[Math.PI / 2, 0, 0]}
+          castShadow
+        >
+          <boxGeometry
+            args={[viewport.width / 4.2, viewport.height / 4.2, 0.1]}
+          />
+          <meshBasicMaterial map={textureMap} />
+        </mesh>
+      </animated.group>
 
-      {/* Character */}
-      <primitive object={nodes.Hips} />
-      <skinnedMesh
-        name="EyeLeft"
-        geometry={nodes.EyeLeft.geometry}
-        material={materials.Wolf3D_Eye}
-        skeleton={nodes.EyeLeft.skeleton}
-        morphTargetDictionary={nodes.EyeLeft.morphTargetDictionary}
-        morphTargetInfluences={nodes.EyeLeft.morphTargetInfluences}
-      />
-      <skinnedMesh
-        name="EyeRight"
-        geometry={nodes.EyeRight.geometry}
-        material={materials.Wolf3D_Eye}
-        skeleton={nodes.EyeRight.skeleton}
-        morphTargetDictionary={nodes.EyeRight.morphTargetDictionary}
-        morphTargetInfluences={nodes.EyeRight.morphTargetInfluences}
-      />
-      <skinnedMesh
-        name="Wolf3D_Head"
-        geometry={nodes.Wolf3D_Head.geometry}
-        material={materials.Wolf3D_Skin}
-        skeleton={nodes.Wolf3D_Head.skeleton}
-        morphTargetDictionary={nodes.Wolf3D_Head.morphTargetDictionary}
-        morphTargetInfluences={nodes.Wolf3D_Head.morphTargetInfluences}
-      />
-      <skinnedMesh
-        name="Wolf3D_Teeth"
-        geometry={nodes.Wolf3D_Teeth.geometry}
-        material={materials.Wolf3D_Teeth}
-        skeleton={nodes.Wolf3D_Teeth.skeleton}
-        morphTargetDictionary={nodes.Wolf3D_Teeth.morphTargetDictionary}
-        morphTargetInfluences={nodes.Wolf3D_Teeth.morphTargetInfluences}
-      />
-      <skinnedMesh
-        geometry={nodes.Wolf3D_Body.geometry}
-        material={materials.Wolf3D_Body}
-        skeleton={nodes.Wolf3D_Body.skeleton}
-      />
-      <skinnedMesh
-        geometry={nodes.Wolf3D_Outfit_Bottom.geometry}
-        material={materials.Wolf3D_Outfit_Bottom}
-        skeleton={nodes.Wolf3D_Outfit_Bottom.skeleton}
-      />
-      <skinnedMesh
-        geometry={nodes.Wolf3D_Outfit_Footwear.geometry}
-        material={materials.Wolf3D_Outfit_Footwear}
-        skeleton={nodes.Wolf3D_Outfit_Footwear.skeleton}
-      />
-      <skinnedMesh
-        geometry={nodes.Wolf3D_Outfit_Top.geometry}
-        material={materials.Wolf3D_Outfit_Top}
-        skeleton={nodes.Wolf3D_Outfit_Top.skeleton}
-      />
-      <skinnedMesh
-        geometry={nodes.Wolf3D_Hair.geometry}
-        material={materials.Wolf3D_Hair}
-        skeleton={nodes.Wolf3D_Hair.skeleton}
-      />
-      {/* Display the texture as the background plane */}
-      <mesh position={[0, 0.4, 1.5]} rotation={[Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[viewport.width / 4.2, viewport.height / 4.2]} />
-        <meshBasicMaterial map={textureMap} />
+      {/* Animated Character */}
+      <animated.group
+        ref={characterGroup}
+        position={characterSpring.position} // Animated position for the character
+        rotation={characterSpring.rotation} // Animated rotation for the character
+      >
+        <skinnedMesh
+          name="EyeLeft"
+          geometry={nodes.EyeLeft.geometry}
+          material={materials.Wolf3D_Eye}
+          skeleton={nodes.EyeLeft.skeleton}
+          morphTargetDictionary={nodes.EyeLeft.morphTargetDictionary}
+          morphTargetInfluences={nodes.EyeLeft.morphTargetInfluences}
+        />
+        <skinnedMesh
+          name="EyeRight"
+          geometry={nodes.EyeRight.geometry}
+          material={materials.Wolf3D_Eye}
+          skeleton={nodes.EyeRight.skeleton}
+          morphTargetDictionary={nodes.EyeRight.morphTargetDictionary}
+          morphTargetInfluences={nodes.EyeRight.morphTargetInfluences}
+        />
+        <skinnedMesh
+          name="Wolf3D_Head"
+          geometry={nodes.Wolf3D_Head.geometry}
+          material={materials.Wolf3D_Skin}
+          skeleton={nodes.Wolf3D_Head.skeleton}
+          morphTargetDictionary={nodes.Wolf3D_Head.morphTargetDictionary}
+          morphTargetInfluences={nodes.Wolf3D_Head.morphTargetInfluences}
+        />
+        <skinnedMesh
+          name="Wolf3D_Teeth"
+          geometry={nodes.Wolf3D_Teeth.geometry}
+          material={materials.Wolf3D_Teeth}
+          skeleton={nodes.Wolf3D_Teeth.skeleton}
+          morphTargetDictionary={nodes.Wolf3D_Teeth.morphTargetDictionary}
+          morphTargetInfluences={nodes.Wolf3D_Teeth.morphTargetInfluences}
+        />
+        <skinnedMesh
+          geometry={nodes.Wolf3D_Body.geometry}
+          material={materials.Wolf3D_Body}
+          skeleton={nodes.Wolf3D_Body.skeleton}
+          castShadow
+          receiveShadow
+        />
+        <skinnedMesh
+          geometry={nodes.Wolf3D_Outfit_Bottom.geometry}
+          material={materials.Wolf3D_Outfit_Bottom}
+          skeleton={nodes.Wolf3D_Outfit_Bottom.skeleton}
+          castShadow
+          receiveShadow
+        />
+        <skinnedMesh
+          geometry={nodes.Wolf3D_Outfit_Footwear.geometry}
+          material={materials.Wolf3D_Outfit_Footwear}
+          skeleton={nodes.Wolf3D_Outfit_Footwear.skeleton}
+          castShadow
+          receiveShadow
+        />
+        <skinnedMesh
+          geometry={nodes.Wolf3D_Outfit_Top.geometry}
+          material={materials.Wolf3D_Outfit_Top}
+          skeleton={nodes.Wolf3D_Outfit_Top.skeleton}
+          castShadow
+          receiveShadow
+        />
+        <skinnedMesh
+          geometry={nodes.Wolf3D_Hair.geometry}
+          material={materials.Wolf3D_Hair}
+          skeleton={nodes.Wolf3D_Hair.skeleton}
+          castShadow
+          receiveShadow
+        />
+        <primitive object={nodes.Hips} />
+      </animated.group>
+      <mesh
+        receiveShadow
+        position={[0, -1.5, 5]}
+        rotation={[-Math.PI / 2, 0, 0]}
+      >
+        <planeGeometry args={[2000, 2000]} />
+        <FloorFBX
+          rotation={[-Math.PI / 2, Math.PI / 2, Math.PI]}
+          scale={2}
+        ></FloorFBX>
+        <shadowMaterial transparent opacity={0.2} />
       </mesh>
-    </group>
+    </>
   );
 }
 

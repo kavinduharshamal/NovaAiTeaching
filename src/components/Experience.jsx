@@ -1,14 +1,16 @@
-import React, { useState } from "react";
-import { Button } from "@mui/material"; // Import Material-UI Button
+import * as THREE from "three";
+import React, { useRef, useState } from "react";
+import { Button } from "@mui/material";
 import {
-  Cloud,
   Environment,
   Html,
   OrbitControls,
   useTexture,
+  Float,
 } from "@react-three/drei";
+import { useFrame, useThree } from "@react-three/fiber";
+import { LayerMaterial, Color, Depth, Noise } from "lamina";
 import { Avtera } from "./Avtera";
-import { useThree } from "@react-three/fiber";
 
 const buttonStyleHome = {
   position: "absolute",
@@ -24,13 +26,14 @@ const buttonStyleHome = {
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-  boxShadow: "2px 2px 8px rgba(0, 0, 0, 0.3)", // Add shadow effect
+  boxShadow: "2px 2px 8px rgba(0, 0, 0, 0.3)",
 };
+
 const buttonStyleplayButton = {
   position: "absolute",
-  left: "-30%", // Center horizontally
+  left: "-30%",
   top: "40%",
-  transform: "translateX(-50%)", // Adjust to center button horizontally
+  transform: "translateX(-50%)",
   width: "70px",
   height: "70px",
   padding: "10px",
@@ -42,13 +45,23 @@ const buttonStyleplayButton = {
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-  boxShadow: "2px 2px 8px rgba(0, 0, 0, 0.3)", // Add shadow effect
+  boxShadow: "2px 2px 8px rgba(0, 0, 0, 0.3)",
 };
 
 export const Experience = (props) => {
-  const [playAudio, setPlayAudio] = useState(false); // Add state for controlling play/pause
-  const textureMap = useTexture(props.texture); // Load texture from props
+  const [playAudio, setPlayAudio] = useState(false);
+  const textureMap = useTexture(props.texture);
   const viewport = useThree((state) => state.viewport);
+
+  // Reference to the environment mesh
+  const environmentRef = useRef();
+
+  // Use useFrame to rotate the environment
+  useFrame(() => {
+    if (environmentRef.current) {
+      environmentRef.current.rotation.y += 0.001; // Adjust the speed of rotation here
+    }
+  });
 
   const togglePlay = () => {
     setPlayAudio((prev) => !prev);
@@ -57,27 +70,57 @@ export const Experience = (props) => {
   return (
     <>
       <OrbitControls
-        enableZoom={false}
-        enablePan={false}
-        enableRotate={false}
-        zoomSpeed={0.5} // Adjust the zoom speed
-        panSpeed={0.3} // Adjust the pan speed
+        enableZoom={true}
+        enablePan={true}
+        enableRotate={true}
+        zoomSpeed={0.5}
+        panSpeed={0.3}
         rotateSpeed={0.4}
       />
-      {/* Pass textureMap as prop to Avtera */}
+
       <Avtera
         position={[0, -3, 5]}
         scale={2}
         rotation={[-Math.PI / 2, 0, 0]}
-        playAudio={playAudio} // Pass playAudio state to Avtera
-        textureMap={textureMap} // Pass textureMap to Avtera
+        playAudio={playAudio}
+        textureMap={textureMap}
       />
-      <Environment preset="sunset" />
 
-      {/* <mesh>
-        <planeGeometry args={[viewport.width, viewport.height]} />
-        <meshBasicMaterial map={textureMap} />
-      </mesh> */}
+      <directionalLight
+        position={[10, 10, 5]}
+        intensity={0.2}
+        castShadow
+        shadow-mapSize-width={4096}
+        shadow-mapSize-height={4096}
+        shadow-camera-near={1}
+        shadow-camera-far={50}
+        shadow-camera-left={-10}
+        shadow-camera-right={10}
+        shadow-camera-top={10}
+        shadow-camera-bottom={-10}
+        shadow-bias={-0.0001}
+      />
+
+      {/* Environment setup with color layers */}
+      <Environment background resolution={64}>
+        <mesh ref={environmentRef} scale={100}>
+          <sphereGeometry args={[1, 64, 64]} />
+          <LayerMaterial side={THREE.BackSide}>
+            {/* Set background color as provided in the code */}
+            <Color color="pink" alpha={1} mode="normal" />
+            <Depth
+              colorA="#705C53" // Gradient start color
+              colorB="#EDDFE0" // Gradient end color
+              alpha={0.5}
+              mode="normal"
+              near={0}
+              far={300}
+              origin={[100, 100, 100]}
+            />
+            <Noise mapping="local" type="cell" scale={0.5} mode="softlight" />
+          </LayerMaterial>
+        </mesh>
+      </Environment>
 
       {/* Material-UI Home Button */}
       <Html position={[viewport, viewport, 0]}>
@@ -96,11 +139,11 @@ export const Experience = (props) => {
         <div style={{ position: "relative", width: "100vw", height: "100vh" }}>
           <Button
             variant="contained"
-            color={playAudio ? "secondary" : "primary"} // Change color based on state
+            color={playAudio ? "secondary" : "primary"}
             style={buttonStyleplayButton}
-            onClick={togglePlay} // Toggle play/pause on click
+            onClick={togglePlay}
           >
-            {playAudio ? "Pause" : "Play"} {/* Button label based on state */}
+            {playAudio ? "Pause" : "Play"}
           </Button>
         </div>
       </Html>

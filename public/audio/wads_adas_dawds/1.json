@@ -1,0 +1,15 @@
+{
+  "metadata": {
+    "soundFile": "/Users/kavinduharshamal/Desktop/aiTeacherReact/NovaAiTeaching/public/audio/wads_adas_dawds/1.wav",
+    "duration": 0.73
+  },
+  "mouthCues": [
+    { "start": 0.00, "end": 0.06, "value": "X" },
+    { "start": 0.06, "end": 0.16, "value": "C" },
+    { "start": 0.16, "end": 0.30, "value": "B" },
+    { "start": 0.30, "end": 0.37, "value": "E" },
+    { "start": 0.37, "end": 0.44, "value": "F" },
+    { "start": 0.44, "end": 0.65, "value": "B" },
+    { "start": 0.65, "end": 0.73, "value": "X" }
+  ]
+}
