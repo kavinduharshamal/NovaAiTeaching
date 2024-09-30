@@ -3,6 +3,7 @@ import { useAnimations, useFBX, useGLTF, useTexture } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useSpring, animated } from "@react-spring/three";
 import * as THREE from "three";
+import { FloorFBX } from "./FloorFBX";
 
 const corresponding = {
   A: "viseme_PP",
@@ -23,8 +24,8 @@ export function Avtera(props) {
   const [maxFileIndex, setMaxFileIndex] = useState(0);
   const [audioStopped, setAudioStopped] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  const folderName = "hi_ranmi_213";
-  const initialTexture = "audio/hi_ranmi_213/main.png";
+  const folderName = "20_MathsII_21";
+  const initialTexture = "/texture/9875308.jpg";
   const fileMusic = "audio/hi_ranmi_213/1.mp3";
   const viewport = useThree((state) => state.viewport);
 
@@ -234,7 +235,7 @@ export function Avtera(props) {
         receiveShadow
       >
         <mesh
-          position={[0, 0.4, 1.5]}
+          position={[0, 0.4, 1.6]}
           rotation={[Math.PI / 2, 0, 0]}
           castShadow
         >
@@ -326,6 +327,10 @@ export function Avtera(props) {
         rotation={[-Math.PI / 2, 0, 0]}
       >
         <planeGeometry args={[2000, 2000]} />
+        <FloorFBX
+          rotation={[-Math.PI / 2, Math.PI / 2, Math.PI]}
+          scale={2}
+        ></FloorFBX>
         <shadowMaterial transparent opacity={0.2} />
       </mesh>
     </>

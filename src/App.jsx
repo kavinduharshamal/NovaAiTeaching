@@ -20,6 +20,7 @@ import img2 from "./assets/off.png";
 import { ExperienceHome } from "./components/ExperienceHome";
 import LogoWhite from "./components/LogoWhite";
 import * as THREE from "three";
+import { TeacherInputData } from "./pages/TeacherInputData";
 
 function App() {
   const [isFeedbackVisible, setIsFeedbackVisible] = useState(true);
@@ -170,7 +171,7 @@ function App() {
         </Route>
 
         <Route path="/inputdata">
-          <Inputdata admin="admin" />
+          <TeacherInputData />
         </Route>
 
         <Route path="/first">

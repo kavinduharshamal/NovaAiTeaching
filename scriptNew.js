@@ -36,16 +36,19 @@ const storage = multer.diskStorage({
     cb(null, folderPath); // Destination folder for uploads
   },
   filename: function (req, file, cb) {
-    const { contentId } = req.body;
-    cb(null, `${file.fieldname}.png`); // Save as contentId.png (or use appropriate extension)
+    cb(null, `${file.fieldname}.png`); // Save as file1.png, file2.png, etc.
   },
 });
 
 // Only allow image files (png, jpeg)
+// Only allow image files (png, jpeg)
 const fileFilter = (req, file, cb) => {
+  console.log("File received:", file); // Debugging line to check file details
+
   if (file.mimetype === "image/png" || file.mimetype === "image/jpeg") {
     cb(null, true);
   } else {
+    console.error("Invalid file type:", file.mimetype); // Log the invalid file type
     cb(new Error("Invalid file type, only PNG and JPEG is allowed!"), false);
   }
 };
@@ -54,10 +57,7 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
-}).fields([
-  { name: "file1", maxCount: 1 },
-  { name: "file2", maxCount: 1 },
-]);
+}).any(); // Allows uploading any file fields
 
 // Function to add user data to data.json
 const addUserNameToData = async (
@@ -114,12 +114,16 @@ app.post("/generateLecture", upload, async (req, res) => {
 
     // Check for file uploads for each content
     for (let i = 0; i < contents.length; i++) {
-      const file = req.files[`file${i + 1}`]; // Access file by name (file1, file2, etc.)
-      if (file) {
-        console.log(`File uploaded successfully: ${file[0].filename}`);
+      const contentId = contents[i].id;
+      const uploadedFile = req.files.find(
+        (file) => file.fieldname === `${i + 1}`
+      );
+
+      if (uploadedFile) {
+        console.log(`File uploaded successfully: ${uploadedFile.filename}`);
       } else {
         return res.status(400).send({
-          error: `File upload is required for content ID: ${contents[i].id}`,
+          error: `File upload is required for content ID: ${contentId}`,
         });
       }
     }
@@ -240,7 +244,6 @@ app.post("/generateLecture", upload, async (req, res) => {
 });
 
 // New API endpoint to count audio files in a folder
-// New API endpoint to count audio files in a folder
 app.get("/countAudioFiles", async (req, res) => {
   const { fileName } = req.query;
 
@@ -251,21 +254,15 @@ app.get("/countAudioFiles", async (req, res) => {
   }
 
   try {
-    // Construct the folder path dynamically using __dirname
     const folderPath = path.join(__dirname, "public/audio/", fileName);
 
-    // Check if the folder exists
     if (!fsSync.existsSync(folderPath)) {
       return res.status(404).send({ error: "Folder not found" });
     }
 
-    // Read the files in the folder
     const files = await fsPromises.readdir(folderPath);
-
-    // Filter for audio files (e.g., mp3)
     const audioFiles = files.filter((file) => file.endsWith(".mp3"));
 
-    // Send the count of audio files
     res.status(200).send({ audioFileCount: audioFiles.length });
   } catch (error) {
     console.error("Error counting audio files:", error);
@@ -283,24 +280,18 @@ app.get("/countPngFiles", async (req, res) => {
   }
 
   try {
-    // Construct the folder path dynamically using __dirname
     const folderPath = path.join(__dirname, "public/audio/", fileName);
 
-    // Check if the folder exists
     if (!fsSync.existsSync(folderPath)) {
       return res.status(404).send({ error: "Folder not found" });
     }
 
-    // Read the files in the folder
     const files = await fsPromises.readdir(folderPath);
+    const pngFiles = files.filter((file) => file.endsWith(".png"));
 
-    // Filter for audio files (e.g., mp3)
-    const audioFiles = files.filter((file) => file.endsWith(".png"));
-
-    // Send the count of audio files
-    res.status(200).send({ audioFileCount: audioFiles.length });
+    res.status(200).send({ pngFileCount: pngFiles.length });
   } catch (error) {
-    console.error("Error counting audio files:", error);
+    console.error("Error counting PNG files:", error);
     res.status(500).send({ error: "Internal server error" });
   }
 });

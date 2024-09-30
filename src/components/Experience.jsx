@@ -88,7 +88,7 @@ export const Experience = (props) => {
 
       <directionalLight
         position={[10, 10, 5]}
-        intensity={1}
+        intensity={0.2}
         castShadow
         shadow-mapSize-width={4096}
         shadow-mapSize-height={4096}
@@ -107,10 +107,10 @@ export const Experience = (props) => {
           <sphereGeometry args={[1, 64, 64]} />
           <LayerMaterial side={THREE.BackSide}>
             {/* Set background color as provided in the code */}
-            <Color color="#7FC7D9" alpha={1} mode="normal" />
+            <Color color="pink" alpha={1} mode="normal" />
             <Depth
-              colorA="#00ffff" // Gradient start color
-              colorB="#ff8f00" // Gradient end color
+              colorA="#705C53" // Gradient start color
+              colorB="#EDDFE0" // Gradient end color
               alpha={0.5}
               mode="normal"
               near={0}
