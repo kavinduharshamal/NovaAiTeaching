@@ -11,6 +11,7 @@ import {
   CircularProgress,
   Fab,
   Backdrop,
+  Menu,
 } from "@mui/material";
 import {
   AttachFile as AttachFileIcon,
@@ -26,6 +27,9 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
+import ProfileBar from "../components/ProfileBar";
+import LogoBar from "../components/LogoBar";
+import MenuBar from "../components/MenuBar";
 
 const API_KEY =
   "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";
@@ -36,7 +40,7 @@ const systemMessage = {
     "Explain things like you're talking to a software professional with 2 years of experience.",
 };
 
-export function TeacherInputData() {
+export function TeacherInputData({ themeMode }) {
   const [contentFields, setContentFields] = useState([
     { id: 1, content: "", file: null },
   ]);
@@ -256,286 +260,302 @@ export function TeacherInputData() {
   };
 
   return (
-    <Box sx={{ padding: 2, position: "relative" }}>
-      {/* Full-screen loading overlay */}
-      <Backdrop
-        sx={{
-          color: "#fff",
-          zIndex: (theme) => theme.zIndex.drawer + 1,
-        }}
-        open={isLoading}
-      >
-        <CircularProgress color="inherit" />
-        <Typography variant="h6" sx={{ marginLeft: 2 }}>
-          Processing, please wait...
-        </Typography>
-      </Backdrop>
-
-      <Typography variant="h4" sx={{ marginBottom: 2 }}>
-        Teacher Input Data
-      </Typography>
-      <TextField
-        label="Module Code"
-        variant="outlined"
-        fullWidth
-        value={moduleCode}
-        onChange={(e) => setModuleCode(e.target.value)}
-        sx={{ marginBottom: 2 }}
-      />
-      <TextField
-        label="Name of Lecture"
-        variant="outlined"
-        fullWidth
-        value={nameOfLecture}
-        onChange={(e) => setNameOfLecture(e.target.value)}
-        sx={{ marginBottom: 2 }}
-      />
-      <TextField
-        label="Batch ID"
-        variant="outlined"
-        fullWidth
-        value={batchId}
-        onChange={(e) => setBatchId(e.target.value)}
-        sx={{ marginBottom: 2 }}
-      />
-
-      {contentFields.map((field, index) => (
-        <Box
-          key={field.id}
-          sx={{ display: "flex", alignItems: "center", marginBottom: 2 }}
-        >
-          <TextField
-            label={`Content ${index + 1}`}
-            variant="outlined"
-            fullWidth
-            multiline
-            rows={4}
-            value={field.content}
-            onChange={(e) => handleContentChange(index, e.target.value)}
-            sx={{ flexGrow: 1 }}
-          />
-          <IconButton color="primary" component="label" sx={{ marginLeft: 1 }}>
-            <AttachFileIcon />
-            <input
-              type="file"
-              accept=".png"
-              hidden
-              onChange={(e) => handleFileChange(index, e.target.files[0])}
-            />
-          </IconButton>
-        </Box>
-      ))}
-
-      {contentFields.length < 5 && (
-        <Button
-          variant="outlined"
-          startIcon={<AddIcon />}
-          onClick={addContentField}
-        >
-          Add More Content
-        </Button>
-      )}
-
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={handleGenerateLecture}
-        sx={{ marginTop: 2 }}
-        disabled={isLoading}
-      >
-        Generate Lecture
-      </Button>
-
-      {/* Chat Button */}
-      {!showPopup && (
-        <Fab
-          color="primary"
-          onClick={handleOpenChat}
+    <>
+      <ProfileBar teacherId={teacherId} type="teacher" themeMode={themeMode} />
+      <LogoBar themeMode={themeMode} />
+      {/* Pass a prop to indicate that this is not the Module details page */}
+      <MenuBar showScheduleButton={false} themeMode={themeMode} />
+      <Box sx={{ padding: 2, position: "relative" }}>
+        {/* Full-screen loading overlay */}
+        <Backdrop
           sx={{
-            position: "fixed",
-            bottom: 20,
-            right: 20,
-            animation: "pushOut 0.5s",
+            color: "#fff",
+            zIndex: (theme) => theme.zIndex.drawer + 1,
           }}
+          open={isLoading}
         >
-          <ChatIcon />
-        </Fab>
-      )}
+          <CircularProgress color="inherit" />
+          <Typography variant="h6" sx={{ marginLeft: 2 }}>
+            Processing, please wait...
+          </Typography>
+        </Backdrop>
 
-      {/* Chat Popup */}
-      {showPopup && (
-        <Draggable handle=".draggable-handle">
-          <div
-            style={{
-              position: "absolute",
+        <Typography variant="h4" sx={{ marginBottom: 2 }}>
+          Teacher Input Data
+        </Typography>
+        <TextField
+          label="Module Code"
+          variant="outlined"
+          fullWidth
+          value={moduleCode}
+          onChange={(e) => setModuleCode(e.target.value)}
+          sx={{ marginBottom: 2 }}
+        />
+        <TextField
+          label="Name of Lecture"
+          variant="outlined"
+          fullWidth
+          value={nameOfLecture}
+          onChange={(e) => setNameOfLecture(e.target.value)}
+          sx={{ marginBottom: 2 }}
+        />
+        <TextField
+          label="Batch ID"
+          variant="outlined"
+          fullWidth
+          value={batchId}
+          onChange={(e) => setBatchId(e.target.value)}
+          sx={{ marginBottom: 2 }}
+        />
+
+        {contentFields.map((field, index) => (
+          <Box
+            key={field.id}
+            sx={{ display: "flex", alignItems: "center", marginBottom: 2 }}
+          >
+            <TextField
+              label={`Content ${index + 1}`}
+              variant="outlined"
+              fullWidth
+              multiline
+              rows={4}
+              value={field.content}
+              onChange={(e) => handleContentChange(index, e.target.value)}
+              sx={{ flexGrow: 1 }}
+            />
+            <IconButton
+              color="primary"
+              component="label"
+              sx={{ marginLeft: 1 }}
+            >
+              <AttachFileIcon />
+              <input
+                type="file"
+                accept=".png"
+                hidden
+                onChange={(e) => handleFileChange(index, e.target.files[0])}
+              />
+            </IconButton>
+          </Box>
+        ))}
+
+        {contentFields.length < 5 && (
+          <Button
+            variant="outlined"
+            startIcon={<AddIcon />}
+            onClick={addContentField}
+          >
+            Add More Content
+          </Button>
+        )}
+
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleGenerateLecture}
+          sx={{ marginTop: 2 }}
+          disabled={isLoading}
+        >
+          Generate Lecture
+        </Button>
+
+        {/* Chat Button */}
+        {!showPopup && (
+          <Fab
+            color="primary"
+            onClick={handleOpenChat}
+            sx={{
+              position: "fixed",
+              bottom: 20,
+              right: 20,
               animation: "pushOut 0.5s",
-              zIndex: "2",
             }}
           >
-            <ResizableBox
-              width={400}
-              height={500}
-              minConstraints={[300, 400]}
-              maxConstraints={[900, 800]}
-              axis="both"
-              resizeHandles={["se"]}
-              className="resizable-chat"
-            >
-              <Paper
-                sx={{
-                  height: "100%",
-                  width: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  boxShadow: "2px 2px 8px rgba(0, 0, 0, 0.3)",
-                  overflow: "hidden",
-                  position: "relative",
-                }}
-              >
-                {/* Draggable Handle */}
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    padding: 2,
-                    backgroundColor: "#3f51b5",
-                    color: "#fff",
-                    cursor: "move",
-                  }}
-                  className="draggable-handle"
-                >
-                  <Typography variant="h6">Chat with ChatGPT</Typography>
-                  <IconButton
-                    onClick={handleMinimizeChat}
-                    sx={{ color: "#fff" }}
-                  >
-                    <MinimizeIcon />
-                  </IconButton>
-                </Box>
+            <ChatIcon />
+          </Fab>
+        )}
 
-                <List
+        {/* Chat Popup */}
+        {showPopup && (
+          <Draggable handle=".draggable-handle">
+            <div
+              style={{
+                position: "absolute",
+                animation: "pushOut 0.5s",
+                zIndex: "2",
+              }}
+            >
+              <ResizableBox
+                width={400}
+                height={500}
+                minConstraints={[300, 400]}
+                maxConstraints={[900, 800]}
+                axis="both"
+                resizeHandles={["se"]}
+                className="resizable-chat"
+              >
+                <Paper
                   sx={{
-                    flexGrow: 1,
-                    overflowY: "auto",
-                    padding: 2,
-                    backgroundColor: "#ffffff",
+                    height: "100%",
+                    width: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    boxShadow: "2px 2px 8px rgba(0, 0, 0, 0.3)",
+                    overflow: "hidden",
+                    position: "relative",
                   }}
                 >
-                  {messages.map((message, index) => (
-                    <ListItem
-                      key={index}
-                      alignItems="flex-start"
-                      sx={{
-                        display: "flex",
-                        justifyContent:
-                          message.sender === "user" ? "flex-end" : "flex-start",
-                      }}
+                  {/* Draggable Handle */}
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      padding: 2,
+                      backgroundColor: "#3f51b5",
+                      color: "#fff",
+                      cursor: "move",
+                    }}
+                    className="draggable-handle"
+                  >
+                    <Typography variant="h6">Chat with ChatGPT</Typography>
+                    <IconButton
+                      onClick={handleMinimizeChat}
+                      sx={{ color: "#fff" }}
                     >
-                      <Box
+                      <MinimizeIcon />
+                    </IconButton>
+                  </Box>
+
+                  <List
+                    sx={{
+                      flexGrow: 1,
+                      overflowY: "auto",
+                      padding: 2,
+                      backgroundColor: "#ffffff",
+                    }}
+                  >
+                    {messages.map((message, index) => (
+                      <ListItem
+                        key={index}
+                        alignItems="flex-start"
                         sx={{
-                          maxWidth: "60%",
-                          padding: 1.5,
-                          borderRadius: 2,
-                          backgroundColor:
-                            message.sender === "user" ? "#DCF8C6" : "#f1f1f1",
-                          boxShadow: "1px 1px 4px rgba(0, 0, 0, 0.1)",
-                          position: "relative",
+                          display: "flex",
+                          justifyContent:
+                            message.sender === "user"
+                              ? "flex-end"
+                              : "flex-start",
                         }}
                       >
-                        <Typography
-                          variant="body2"
+                        <Box
                           sx={{
-                            fontWeight: "bold",
-                            marginBottom: 0.5,
-                            color:
-                              message.sender === "ChatGPT" ? "#3f51b5" : "#000",
+                            maxWidth: "60%",
+                            padding: 1.5,
+                            borderRadius: 2,
+                            backgroundColor:
+                              message.sender === "user" ? "#DCF8C6" : "#f1f1f1",
+                            boxShadow: "1px 1px 4px rgba(0, 0, 0, 0.1)",
+                            position: "relative",
                           }}
                         >
-                          {message.sender === "user" ? "You" : "ChatGPT"}
-                        </Typography>
-                        <Typography variant="body1">
-                          {message.message}
-                        </Typography>
-                        {message.sender === "ChatGPT" && (
-                          <IconButton
-                            onClick={() =>
-                              handleCopyToClipboard(message.message)
-                            }
-                            size="small"
+                          <Typography
+                            variant="body2"
                             sx={{
-                              position: "absolute",
-                              top: 5,
-                              right: 5,
-                              color: "#3f51b5",
+                              fontWeight: "bold",
+                              marginBottom: 0.5,
+                              color:
+                                message.sender === "ChatGPT"
+                                  ? "#3f51b5"
+                                  : "#000",
                             }}
                           >
-                            <ContentCopyIcon sx={{ fontSize: "12px" }} />
-                          </IconButton>
-                        )}
-                      </Box>
-                    </ListItem>
-                  ))}
+                            {message.sender === "user" ? "You" : "ChatGPT"}
+                          </Typography>
+                          <Typography variant="body1">
+                            {message.message}
+                          </Typography>
+                          {message.sender === "ChatGPT" && (
+                            <IconButton
+                              onClick={() =>
+                                handleCopyToClipboard(message.message)
+                              }
+                              size="small"
+                              sx={{
+                                position: "absolute",
+                                top: 5,
+                                right: 5,
+                                color: "#3f51b5",
+                              }}
+                            >
+                              <ContentCopyIcon sx={{ fontSize: "12px" }} />
+                            </IconButton>
+                          )}
+                        </Box>
+                      </ListItem>
+                    ))}
 
-                  {isTyping && (
-                    <ListItem
-                      alignItems="flex-start"
-                      sx={{ display: "flex", justifyContent: "flex-start" }}
-                    >
-                      <Box
-                        sx={{
-                          maxWidth: "60%",
-                          padding: 1.5,
-                          borderRadius: 2,
-                          backgroundColor: "#f1f1f1",
-                          boxShadow: "1px 1px 4px rgba(0, 0, 0, 0.1)",
-                        }}
+                    {isTyping && (
+                      <ListItem
+                        alignItems="flex-start"
+                        sx={{ display: "flex", justifyContent: "flex-start" }}
                       >
-                        <CircularProgress size={20} sx={{ marginRight: 1 }} />
-                        <Typography variant="body2" sx={{ display: "inline" }}>
-                          ChatGPT is typing...
-                        </Typography>
-                      </Box>
-                    </ListItem>
-                  )}
-                </List>
+                        <Box
+                          sx={{
+                            maxWidth: "60%",
+                            padding: 1.5,
+                            borderRadius: 2,
+                            backgroundColor: "#f1f1f1",
+                            boxShadow: "1px 1px 4px rgba(0, 0, 0, 0.1)",
+                          }}
+                        >
+                          <CircularProgress size={20} sx={{ marginRight: 1 }} />
+                          <Typography
+                            variant="body2"
+                            sx={{ display: "inline" }}
+                          >
+                            ChatGPT is typing...
+                          </Typography>
+                        </Box>
+                      </ListItem>
+                    )}
+                  </List>
 
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    padding: 2,
-                    borderTop: "1px solid #ddd",
-                    backgroundColor: "#f9f9f9",
-                  }}
-                >
-                  <TextField
-                    fullWidth
-                    variant="outlined"
-                    placeholder="Type your message here..."
-                    value={inputData}
-                    onChange={(e) => setInputData(e.target.value)}
-                    sx={{ marginRight: 2 }}
-                  />
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleSend}
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      padding: 2,
+                      borderTop: "1px solid #ddd",
+                      backgroundColor: "#f9f9f9",
+                    }}
                   >
-                    Send
-                  </Button>
-                </Box>
-              </Paper>
-            </ResizableBox>
-          </div>
-        </Draggable>
-      )}
+                    <TextField
+                      fullWidth
+                      variant="outlined"
+                      placeholder="Type your message here..."
+                      value={inputData}
+                      onChange={(e) => setInputData(e.target.value)}
+                      sx={{ marginRight: 2 }}
+                    />
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={handleSend}
+                    >
+                      Send
+                    </Button>
+                  </Box>
+                </Paper>
+              </ResizableBox>
+            </div>
+          </Draggable>
+        )}
 
-      <ToastContainer />
+        <ToastContainer />
 
-      {/* Animations */}
-      <style>
-        {`
+        {/* Animations */}
+        <style>
+          {`
           @keyframes pushOut {
             0% {
               transform: scale(0);
@@ -557,7 +577,8 @@ export function TeacherInputData() {
             }
           }
         `}
-      </style>
-    </Box>
+        </style>
+      </Box>
+    </>
   );
 }

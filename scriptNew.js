@@ -26,9 +26,11 @@ const __dirname = path.dirname(__filename);
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const { moduleCode, nameOfLecture, batchId } = req.body;
+    const sanitizedModuleCode = String(moduleCode).replace(/\./g, "");
+    const sanitizedBatchNumber = String(batchId).replace(/\./g, "");
     const folderPath = path.join(
       __dirname,
-      `public/audio/${moduleCode}_${nameOfLecture}_${batchId}`
+      `public/audio/${sanitizedModuleCode}_${nameOfLecture}_${sanitizedBatchNumber}`
     );
     if (!fsSync.existsSync(folderPath)) {
       fsSync.mkdirSync(folderPath, { recursive: true });
@@ -100,11 +102,13 @@ app.post("/generateLecture", upload, async (req, res) => {
   if (!moduleCode || !nameOfLecture || !batchId || !contents) {
     return res.status(400).send({ error: "All fields are required" });
   }
+  const sanitizedModuleCode = String(moduleCode).replace(/\./g, "");
+  const sanitizedBatchNumber = String(batchId).replace(/\./g, "");
 
   try {
     const folderPath = path.join(
       __dirname,
-      `public/audio/${moduleCode}_${nameOfLecture}_${batchId}`
+      `public/audio/${sanitizedModuleCode}_${nameOfLecture}_${sanitizedBatchNumber}`
     );
 
     // Ensure the folder path exists

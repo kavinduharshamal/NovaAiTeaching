@@ -8,16 +8,23 @@ import MenuBar from "./MenuBar";
 export const ModuleDetails = () => {
   // Define the model inside the component
   class TopicModel {
-    constructor(id, moduleId, topicName, url1) {
+    constructor(id, moduleId, topicName, url1, batchId) {
       this.id = id;
       this.moduleId = moduleId;
       this.topicName = topicName;
       this.url1 = url1; // Assuming only one URL for the topic name
+      this.batchId = batchId;
     }
 
     // Static method to map raw API data to an instance of TopicModel
     static fromApi(data) {
-      return new TopicModel(data.id, data.moduleId, data.topicName, data.url1);
+      return new TopicModel(
+        data.id,
+        data.moduleId,
+        data.topicName,
+        data.url1,
+        data.batchId
+      );
     }
   }
 
@@ -25,6 +32,8 @@ export const ModuleDetails = () => {
   const [topics, setTopics] = useState([]);
   const [loading, setLoading] = useState(true);
   const [moduleName, setModuleName] = useState("");
+  const [moduleCode, setModuleCode] = useState("");
+  const [batchNumber, setBatchId] = useState("");
 
   useEffect(() => {
     const fetchModuleDetails = async () => {
@@ -36,7 +45,13 @@ export const ModuleDetails = () => {
         const ModuleName = await axios.get(
           `https://novaainew-dvfve3g7bqbneqbv.canadacentral-01.azurewebsites.net/api/Module/${moduleId}`
         );
+        const BatchNumber = await axios.get(
+          `https://novaainew-dvfve3g7bqbneqbv.canadacentral-01.azurewebsites.net/api/GetModulesWithTopicsByTeacherId/${teacherId}`
+        );
+
         setModuleName(ModuleName.data.moduleName);
+        setModuleCode(ModuleName.data.moduleCode);
+        setBatchId(BatchNumber.data.$values[0].batchNumber);
 
         // Extract the $values array from the response
         const topicsArray = response.data.$values;
@@ -54,6 +69,18 @@ export const ModuleDetails = () => {
 
     fetchModuleDetails();
   }, [moduleId]);
+
+  const handleTopicClick = (topic) => {
+    console.log(topic.topicName);
+    console.log(moduleCode, batchNumber);
+    const sanitizedModuleCode = String(moduleCode).replace(/\./g, "");
+    const sanitizedBatchNumber = String(batchNumber).replace(/\./g, "");
+    console.log(sanitizedModuleCode, sanitizedBatchNumber);
+
+    const path = `${sanitizedModuleCode}_${topic.topicName}_${sanitizedBatchNumber}`;
+    console.log(path);
+    window.location.href = `/${path}`;
+  };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -73,17 +100,13 @@ export const ModuleDetails = () => {
               key={topic.id}
               className="border border-gray-300 rounded-lg p-4 bg-white shadow-sm max-w-5xl"
             >
-              {/* Make the topic name clickable */}
-              <h2 className="text-m font-medium mb-2">
-                <a
-                  href={topic.url1 || "#"} // Link to the first URL or a default link
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-black hover:underline"
-                >
-                  {topic.topicName}
-                </a>
-              </h2>
+              {/* Add a button to trigger an action */}
+              <button
+                onClick={() => handleTopicClick(topic)}
+                className="text-black font-medium hover:underline focus:outline-none bg-gray-100 p-2 rounded"
+              >
+                {topic.topicName}
+              </button>
             </div>
           ))
         ) : (

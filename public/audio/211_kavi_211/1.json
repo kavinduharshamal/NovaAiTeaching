@@ -1,0 +1,16 @@
+{
+  "metadata": {
+    "soundFile": "/Users/kavinduharshamal/Desktop/aiTeacherReact/NovaAiTeaching/public/audio/211_kavi_211/1.wav",
+    "duration": 1.38
+  },
+  "mouthCues": [
+    { "start": 0.00, "end": 0.05, "value": "X" },
+    { "start": 0.05, "end": 0.25, "value": "C" },
+    { "start": 0.25, "end": 0.39, "value": "B" },
+    { "start": 0.39, "end": 0.47, "value": "A" },
+    { "start": 0.47, "end": 0.61, "value": "F" },
+    { "start": 0.61, "end": 0.69, "value": "A" },
+    { "start": 0.69, "end": 1.05, "value": "B" },
+    { "start": 1.05, "end": 1.38, "value": "X" }
+  ]
+}

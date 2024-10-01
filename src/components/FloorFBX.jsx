@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import { useGLTF } from "@react-three/drei";
 
 export function FloorFBX(props) {
-  const { nodes, materials } = useGLTF("models//Wood Floor.glb");
+  const { nodes, materials } = useGLTF("models/Wood%20Floor.glb");
   return (
     <group {...props} dispose={null}>
       <mesh

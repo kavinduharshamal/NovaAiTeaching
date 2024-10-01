@@ -50,7 +50,6 @@ const buttonStyleplayButton = {
 
 export const Experience = (props) => {
   const [playAudio, setPlayAudio] = useState(false);
-  const textureMap = useTexture(props.texture);
   const viewport = useThree((state) => state.viewport);
 
   // Reference to the environment mesh
@@ -83,7 +82,6 @@ export const Experience = (props) => {
         scale={2}
         rotation={[-Math.PI / 2, 0, 0]}
         playAudio={playAudio}
-        textureMap={textureMap}
       />
 
       <directionalLight

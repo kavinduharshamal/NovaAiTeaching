@@ -4,6 +4,7 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { useSpring, animated } from "@react-spring/three";
 import * as THREE from "three";
 import { FloorFBX } from "./FloorFBX";
+import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 
 const corresponding = {
   A: "viseme_PP",
@@ -24,7 +25,9 @@ export function Avtera(props) {
   const [maxFileIndex, setMaxFileIndex] = useState(0);
   const [audioStopped, setAudioStopped] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  const folderName = "20121_ranm,i_sarani";
+  const { preview } = useParams();
+  console.log(preview);
+  const folderName = preview;
   const initialTexture = "/texture/9875308.jpg";
   const fileMusic = "audio/hi_ranmi_213/1.mp3";
   const viewport = useThree((state) => state.viewport);
@@ -327,10 +330,10 @@ export function Avtera(props) {
         rotation={[-Math.PI / 2, 0, 0]}
       >
         <planeGeometry args={[2000, 2000]} />
-        <FloorFBX
+        {/* <FloorFBX
           rotation={[-Math.PI / 2, Math.PI / 2, Math.PI]}
           scale={2}
-        ></FloorFBX>
+        ></FloorFBX> */}
         <shadowMaterial transparent opacity={0.2} />
       </mesh>
     </>

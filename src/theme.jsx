@@ -14,8 +14,8 @@ const lightTheme = createTheme({
       paper: "#FFFFFF",
     },
     text: {
-      primary: "#2E3A3F",
-      secondary: "#FFFFFF",
+      primary: "#2E3A3F", // Dark color for main text in light mode
+      secondary: "#5C6B73",
     },
   },
 });
