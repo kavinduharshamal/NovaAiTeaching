@@ -131,6 +131,22 @@ function App() {
         <Route path="/dashboard/teacher/:teacherId">
           <ThemeProvider theme={currentTheme}>
             <CssBaseline />
+            <IconButton
+              onClick={toggleTheme}
+              style={{
+                position: "absolute",
+                top: 2,
+                left: 10,
+                zIndex: 1000,
+              }}
+              color="inherit"
+            >
+              {themeMode === "light" ? (
+                <Brightness4Icon />
+              ) : (
+                <Brightness7Icon />
+              )}
+            </IconButton>
             <DashBoardTeacher themeMode={themeMode} toggleTheme={toggleTheme} />
           </ThemeProvider>
         </Route>
@@ -138,6 +154,22 @@ function App() {
         <Route path="/GetTopicsByModuleId/:teacherId/:moduleId">
           <ThemeProvider theme={currentTheme}>
             <CssBaseline />
+            <IconButton
+              onClick={toggleTheme}
+              style={{
+                position: "absolute",
+                top: 2,
+                left: 10,
+                zIndex: 1000,
+              }}
+              color="inherit"
+            >
+              {themeMode === "light" ? (
+                <Brightness4Icon />
+              ) : (
+                <Brightness7Icon />
+              )}
+            </IconButton>
             <ModuleDetails themeMode={themeMode} />
           </ThemeProvider>
         </Route>
@@ -200,7 +232,7 @@ function App() {
         {/* Routes that are outside the ThemeProvider */}
         <Route path="/:preview">
           <div style={canvasStyle}>
-            <Canvas shadows camera={{ position: [0, 0, 9.5], fov: 30 }}>
+            <Canvas shadows camera={{ position: [0, 0, 9.5], fov: 40 }}>
               <Suspense fallback={null}>
                 <Experience />
               </Suspense>

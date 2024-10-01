@@ -5,6 +5,7 @@ import { useSpring, animated } from "@react-spring/three";
 import * as THREE from "three";
 import { FloorFBX } from "./FloorFBX";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
+import { Classroom } from "./Calssroom";
 
 const corresponding = {
   A: "viseme_PP",
@@ -134,7 +135,7 @@ export function Avtera(props) {
 
   // Smooth animation for the mesh (background texture plane)
   const meshSpring = useSpring({
-    position: isPlaying ? [0, -3, 2] : [0, -3, 5], // Adjusted mesh position
+    position: isPlaying ? [0, -3, 4] : [0, -3, 5], // Adjusted mesh position
     rotation: isPlaying ? [-Math.PI / 2, 0, Math.PI / 6] : [-Math.PI / 2, 0, 0], // Adjusted rotation for the mesh
     config: { duration: 1000 },
   });
@@ -242,10 +243,11 @@ export function Avtera(props) {
           rotation={[Math.PI / 2, 0, 0]}
           castShadow
         >
-          <boxGeometry
-            args={[viewport.width / 4.2, viewport.height / 4.2, 0.1]}
-          />
-          <meshBasicMaterial map={textureMap} />
+          <Classroom scale={0.5} position={[0, -0.82, 2]} />
+          <mesh position={[0.1, 0.07, 0.01]} scale={0.98}>
+            <boxGeometry args={[2.1, 1.4, 0.1]} position={[0, 0, 0]} />
+            <meshBasicMaterial map={textureMap} />
+          </mesh>
         </mesh>
       </animated.group>
 
