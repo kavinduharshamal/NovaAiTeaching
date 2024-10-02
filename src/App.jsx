@@ -34,6 +34,9 @@ import ProfileBar from "./components/ProfileBar";
 import LogoBar from "./components/LogoBar";
 import DashBoardStudent from "./components/DashBoardStudent";
 import OnlineReference from "./components/OnlineReference";
+import ModuleDetailsStudents from "./components/ModuleDetailsStudents";
+import GuidelineStudent from "./components/GuidlineStudent";
+import OnlineReferenceStudent from "./components/OnlineReferenceStudent";
 
 function App() {
   const [isFeedbackVisible, setIsFeedbackVisible] = useState(true);
@@ -138,6 +141,14 @@ function App() {
             <Event />
           </ThemeProvider>
         </Route>
+
+        <Route path="/dashboard/Student/GuidLines">
+          <ThemeProvider theme={currentTheme}>
+            <CssBaseline />
+            <GuidelineStudent role={"student"} />
+          </ThemeProvider>
+        </Route>
+
         <Route path="/dashboard/GuidLines">
           <ThemeProvider theme={currentTheme}>
             <CssBaseline />
@@ -167,12 +178,21 @@ function App() {
             <DashBoardTeacher themeMode={themeMode} toggleTheme={toggleTheme} />
           </ThemeProvider>
         </Route>
+
         <Route path="/dashboard/online_Reference">
           <ThemeProvider theme={currentTheme}>
             <CssBaseline />
             <OnlineReference />
           </ThemeProvider>
         </Route>
+
+        <Route path="/dashboard/Student/online_Reference">
+          <ThemeProvider theme={currentTheme}>
+            <CssBaseline />
+            <OnlineReferenceStudent />
+          </ThemeProvider>
+        </Route>
+
         <Route path="/dashboard/student/:batchNum">
           <ThemeProvider theme={currentTheme}>
             <CssBaseline />
@@ -216,6 +236,29 @@ function App() {
               )}
             </IconButton>
             <ModuleDetails themeMode={themeMode} />
+          </ThemeProvider>
+        </Route>
+
+        <Route path="/GetTopicsByModuleIdStudent/:moduleId">
+          <ThemeProvider theme={currentTheme}>
+            <CssBaseline />
+            <IconButton
+              onClick={toggleTheme}
+              style={{
+                position: "absolute",
+                top: 2,
+                left: 10,
+                zIndex: 1000,
+              }}
+              color="inherit"
+            >
+              {themeMode === "light" ? (
+                <Brightness4Icon />
+              ) : (
+                <Brightness7Icon />
+              )}
+            </IconButton>
+            <ModuleDetailsStudents themeMode={themeMode} />
           </ThemeProvider>
         </Route>
 

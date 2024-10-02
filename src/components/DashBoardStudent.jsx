@@ -13,6 +13,7 @@ import ReactionBoard from "./ReactionBoard";
 import ReminderCalendar from "./ReminderCalendar";
 import DashboardModulesStudent from "./DashboardModulesStudent";
 import Noticeboard from "./Noticeboard";
+import MenuBarStudent from "./MenuBarStudent";
 
 const DashBoardStudent = ({ themeMode, toggleTheme }) => {
   const { batchNum } = useParams();
@@ -37,7 +38,7 @@ const DashBoardStudent = ({ themeMode, toggleTheme }) => {
       />
       <LogoBar themeMode={themeMode} />
       {/* Pass a prop to indicate that this is not the Module details page */}
-      <Menu showScheduleButton={false} themeMode={themeMode} />
+      <MenuBarStudent showScheduleButton={false} themeMode={themeMode} />
 
       {/* Main Content Section */}
       <div className="p-6 flex flex-wrap w-full">

@@ -50,23 +50,23 @@ const ScheduleButton = styled(Button)(({ theme }) => ({
   marginBottom: "0.8rem",
 }));
 
-const MenuBar = ({ showScheduleButton, toggleTheme, themeMode }) => {
+const MenuBarStudent = ({ showScheduleButton, toggleTheme, themeMode }) => {
   const isSmallScreen = useMediaQuery("(max-width:600px)");
   const teacherId = Cookies.get("teacherId");
   const { moduleId } = useParams();
 
   const handleButtonClick = (page) => {
     console.log(`${page} clicked)`);
-    window.location.href = `/dashboard/teacher/${teacherId}`;
+    window.location.href = `/dashboard/Student/${Cookies.get("batchId")}`;
   };
   const handleButtonClickGuidline = (page) => {
     console.log(`${page} clicked`);
-    window.location.href = "/dashboard/GuidLines";
+    window.location.href = "/dashboard/Student/GuidLines";
   };
 
   const handleButtonClickOnlineReference = (page) => {
     console.log(`${page} clicked`);
-    window.location.href = "/dashboard/online_Reference";
+    window.location.href = "/dashboard/Student/online_Reference";
   };
 
   return (
@@ -81,6 +81,7 @@ const MenuBar = ({ showScheduleButton, toggleTheme, themeMode }) => {
             <CustomButton onClick={() => handleButtonClick("Events")}>
               Events
             </CustomButton>
+
             <CustomButton
               onClick={() => handleButtonClickGuidline("Guidelines")}
             >
@@ -115,4 +116,4 @@ const MenuBar = ({ showScheduleButton, toggleTheme, themeMode }) => {
   );
 };
 
-export default MenuBar;
+export default MenuBarStudent;

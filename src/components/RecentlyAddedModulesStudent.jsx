@@ -25,6 +25,7 @@ const RecentlyAddedModulesStudent = ({ themeMode }) => {
 
           // Get the batch ID from cookies and filter the modules
           const batchIdFromCookies = Cookies.get("batchId");
+          console.log(batchIdFromCookies);
           if (batchIdFromCookies) {
             filteredModules = filteredModules.filter((module) =>
               String(module.batchNumber).startsWith(batchIdFromCookies)
@@ -72,7 +73,7 @@ const RecentlyAddedModulesStudent = ({ themeMode }) => {
                 : "bg-white text-gray-900"
             }`}
             onClick={() =>
-              (window.location.href = `/GetTopicsByModuleId/${1}/${module.id}`)
+              (window.location.href = `/GetTopicsByModuleIdStudent/${module.id}`)
             }
           >
             {/* Adding a local image */}

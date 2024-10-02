@@ -81,6 +81,11 @@ const Login = () => {
           // Successful student login
           const batchId = parseInt(data.batchID);
           console.log(batchId);
+
+          const batchIdWithoutDot = String(data.batchID).replace(/\./g, "");
+          Cookies.set("batchIdWithoutDot", `${batchIdWithoutDot}`, {
+            expires: 7,
+          });
           console.log(data.batchID);
           console.log(data.id);
           Cookies.set("studentId", `${data.id}`, { expires: 7 });
