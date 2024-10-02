@@ -11,6 +11,8 @@ import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import ReactionBoard from "./ReactionBoard";
 import ReminderCalendar from "./ReminderCalendar";
+import DashboardModulesStudent from "./DashboardModulesStudent";
+import Noticeboard from "./Noticeboard";
 
 const DashBoardStudent = ({ themeMode, toggleTheme }) => {
   const { batchNum } = useParams();
@@ -37,31 +39,23 @@ const DashBoardStudent = ({ themeMode, toggleTheme }) => {
       {/* Pass a prop to indicate that this is not the Module details page */}
       <Menu showScheduleButton={false} themeMode={themeMode} />
 
-      {/* <div className="p-6 flex flex-wrap w-full">
-        
+      {/* Main Content Section */}
+      <div className="p-6 flex flex-wrap w-full">
+        {/* Main Modules Dashboard taking up 3/4 of the screen */}
         <div className="w-3/4 pr-6">
-          <div className="mb-4">
-            <RecentlyAddedModules teacherId={teacherId} themeMode={themeMode} />
-          </div>
-
-         
-          <hr
-            className={`border-t-1 my-4 w-full ${
-              themeMode === "dark" ? "border-white" : "border-[#0F4F60]"
-            }`}
-          />
-
-          <div>
-            <AllAddedModules teacherId={teacherId} themeMode={themeMode} />
-          </div>
+          <DashboardModulesStudent themeMode={themeMode} />
         </div>
-      
+
+        {/* Reaction Board and Reminder Calendar taking up 1/4 of the screen */}
         <div className="w-1/4 flex-col py-9">
           <ReactionBoard />
           <div className="h-12"></div>
           <ReminderCalendar themeMode={themeMode} />
+          <div>
+            <Noticeboard themeMode={themeMode} />
+          </div>
         </div>
-      </div> */}
+      </div>
     </div>
   );
 };

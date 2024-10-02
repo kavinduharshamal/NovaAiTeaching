@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import dayjs from "dayjs";
 import Calendar from "./Calendar";
+import ReminderButton from "./ReminderButton"; // Import your ReminderButton component
 
 export default function ReminderCalendar() {
   const { teacherId } = useParams(); // Get teacherId from URL parameters
@@ -41,11 +42,35 @@ export default function ReminderCalendar() {
     fetchReminders(); // Call the function to fetch reminders
   }, [teacherId, currentMonth]);
 
+  // Function to handle adding a reminder
+  const handleAddReminder = () => {
+    console.log("Add reminder button clicked");
+    // Add your logic for adding a reminder here (e.g., open a dialog)
+  };
+
   return (
     <div style={{ padding: "20px" }}>
-      <h1 className="h font-bold p-3 text-xl" style={{ textAlign: "center" }}>
-        Reminders
-      </h1>
+      <div style={{ padding: "20px" }}>
+        <div
+          className="flex"
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <h1
+            className="h font-bold text-xl"
+            style={{ textAlign: "center", flexGrow: 1 }}
+          >
+            Reminders
+          </h1>
+          <div>
+            <ReminderButton onClick={handleAddReminder} />
+          </div>
+        </div>
+      </div>
+
       <Calendar
         monthNumber={currentMonth}
         highlightedDates={highlightedDates}

@@ -56,12 +56,17 @@ const MenuBar = ({ showScheduleButton, toggleTheme, themeMode }) => {
   const { moduleId } = useParams();
 
   const handleButtonClick = (page) => {
-    console.log(`${page} clicked`);
+    console.log(`${page} clicked)`);
     window.location.href = `/dashboard/teacher/${teacherId}`;
   };
   const handleButtonClickGuidline = (page) => {
     console.log(`${page} clicked`);
     window.location.href = "/dashboard/GuidLines";
+  };
+
+  const handleButtonClickOnlineReference = (page) => {
+    console.log(`${page} clicked`);
+    window.location.href = "/dashboard/online_Reference";
   };
 
   return (
@@ -83,6 +88,13 @@ const MenuBar = ({ showScheduleButton, toggleTheme, themeMode }) => {
               onClick={() => handleButtonClickGuidline("Guidelines")}
             >
               Technical Guidelines
+            </CustomButton>
+            <CustomButton
+              onClick={() =>
+                handleButtonClickOnlineReference("Online Reference")
+              }
+            >
+              Online Reference
             </CustomButton>
           </div>
           <div style={{ display: "flex", alignItems: "center" }}>

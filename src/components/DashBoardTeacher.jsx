@@ -1,16 +1,14 @@
 import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Button, useTheme, IconButton } from "@mui/material";
+import { useTheme } from "@mui/material";
 import ProfileBar from "./ProfileBar";
 import LogoBar from "./LogoBar";
 import Menu from "./MenuBar";
 import Cookies from "js-cookie";
-import RecentlyAddedModules from "./RecentlyAddedModules";
-import AllAddedModules from "./AllAddedModules";
-import Brightness4Icon from "@mui/icons-material/Brightness4";
-import Brightness7Icon from "@mui/icons-material/Brightness7";
 import ReactionBoard from "./ReactionBoard";
 import ReminderCalendar from "./ReminderCalendar";
+import DashboardModules from "./DashboardModules";
+import Noticeboard from "./Noticeboard";
 
 const DashBoardTeacher = ({ themeMode, toggleTheme }) => {
   const { teacherId } = useParams();
@@ -32,38 +30,28 @@ const DashBoardTeacher = ({ themeMode, toggleTheme }) => {
         color: theme.palette.text.primary,
       }}
     >
-      {/* Dark Mode Toggle Button */}
-
-      {/* Pass teacherId and themeMode as props to ProfileBar */}
+      {/* Profile Bar and Logo Bar */}
       <ProfileBar teacherId={teacherId} type="teacher" themeMode={themeMode} />
       <LogoBar themeMode={themeMode} />
-      {/* Pass a prop to indicate that this is not the Module details page */}
+
+      {/* Menu Bar without schedule button */}
       <Menu showScheduleButton={false} themeMode={themeMode} />
 
-      {/* Main content layout with flex container */}
+      {/* Main Content Section */}
       <div className="p-6 flex flex-wrap w-full">
-        {/* Recently Added Modules and All Added Modules */}
+        {/* Main Modules Dashboard taking up 3/4 of the screen */}
         <div className="w-3/4 pr-6">
-          <div className="mb-4">
-            <RecentlyAddedModules teacherId={teacherId} themeMode={themeMode} />
-          </div>
-
-          {/* Horizontal Divider */}
-          <hr
-            className={`border-t-1 my-4 w-full ${
-              themeMode === "dark" ? "border-white" : "border-[#0F4F60]"
-            }`}
-          />
-
-          <div>
-            <AllAddedModules teacherId={teacherId} themeMode={themeMode} />
-          </div>
+          <DashboardModules teacherId={teacherId} themeMode={themeMode} />
         </div>
-        {/* Reaction Board - Takes up 1/4 of the screen */}
+
+        {/* Reaction Board and Reminder Calendar taking up 1/4 of the screen */}
         <div className="w-1/4 flex-col py-9">
           <ReactionBoard />
           <div className="h-12"></div>
           <ReminderCalendar themeMode={themeMode} />
+          <div>
+            <Noticeboard themeMode={themeMode} />
+          </div>
         </div>
       </div>
     </div>

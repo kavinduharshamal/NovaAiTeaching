@@ -5,14 +5,16 @@ import img2 from "/texture/img_2.png";
 import img3 from "/texture/img_3.png";
 import img4 from "/texture/img_4.png";
 import img5 from "/texture/img_5.png";
+import Cookies from "js-cookie";
 
-const RecentlyAddedModules = ({ teacherId, themeMode, selectedBatch }) => {
+const RecentlyAddedModulesStudent = ({ themeMode }) => {
   const [modules, setModules] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const randomImages = [img1, img2, img3, img4, img5];
-  const apiUrl = `https://novaainew-dvfve3g7bqbneqbv.canadacentral-01.azurewebsites.net/api/GetModulesWithTopicsByTeacherId/${teacherId}`;
+  const apiUrl =
+    "https://novaainew-dvfve3g7bqbneqbv.canadacentral-01.azurewebsites.net/api/Module";
 
   useEffect(() => {
     const fetchModules = async () => {
@@ -21,10 +23,11 @@ const RecentlyAddedModules = ({ teacherId, themeMode, selectedBatch }) => {
         if (response.data && response.data.$values) {
           let filteredModules = response.data.$values;
 
-          // Filter by selectedBatch if it is set
-          if (selectedBatch) {
+          // Get the batch ID from cookies and filter the modules
+          const batchIdFromCookies = Cookies.get("batchId");
+          if (batchIdFromCookies) {
             filteredModules = filteredModules.filter((module) =>
-              String(module.batchNumber).startsWith(selectedBatch)
+              String(module.batchNumber).startsWith(batchIdFromCookies)
             );
           }
 
@@ -45,7 +48,7 @@ const RecentlyAddedModules = ({ teacherId, themeMode, selectedBatch }) => {
     };
 
     fetchModules();
-  }, [teacherId, selectedBatch]); // Refetch when teacherId or selectedBatch changes
+  }, []); // Fetch modules when the component mounts
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
@@ -69,7 +72,7 @@ const RecentlyAddedModules = ({ teacherId, themeMode, selectedBatch }) => {
                 : "bg-white text-gray-900"
             }`}
             onClick={() =>
-              (window.location.href = `/GetTopicsByModuleId/${teacherId}/${module.id}`)
+              (window.location.href = `/GetTopicsByModuleId/${1}/${module.id}`)
             }
           >
             {/* Adding a local image */}
@@ -109,4 +112,4 @@ const RecentlyAddedModules = ({ teacherId, themeMode, selectedBatch }) => {
   );
 };
 
-export default RecentlyAddedModules;
+export default RecentlyAddedModulesStudent;

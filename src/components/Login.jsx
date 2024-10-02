@@ -79,12 +79,14 @@ const Login = () => {
 
         if (response.ok) {
           // Successful student login
-          console.log("Student login successful:", data);
-          const batchId = data.batchID;
+          const batchId = parseInt(data.batchID);
+          console.log(batchId);
           console.log(data.batchID);
           console.log(data.id);
           Cookies.set("studentId", `${data.id}`, { expires: 7 });
-          Cookies.set("batchId", `${data.batchID}`, { expires: 7 });
+          Cookies.set("batchId", `${batchId}`, { expires: 7 });
+
+          console.log(Cookies.get("batchId"));
           window.location.href = `/dashboard/Student/${batchId}`; // Redirecting to student's batch page
         } else {
           setErrorMessage(data.message || "Invalid email or password");

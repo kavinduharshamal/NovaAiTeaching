@@ -33,6 +33,7 @@ import { PreviewPage } from "./components/PreviewPage";
 import ProfileBar from "./components/ProfileBar";
 import LogoBar from "./components/LogoBar";
 import DashBoardStudent from "./components/DashBoardStudent";
+import OnlineReference from "./components/OnlineReference";
 
 function App() {
   const [isFeedbackVisible, setIsFeedbackVisible] = useState(true);
@@ -166,7 +167,12 @@ function App() {
             <DashBoardTeacher themeMode={themeMode} toggleTheme={toggleTheme} />
           </ThemeProvider>
         </Route>
-
+        <Route path="/dashboard/online_Reference">
+          <ThemeProvider theme={currentTheme}>
+            <CssBaseline />
+            <OnlineReference />
+          </ThemeProvider>
+        </Route>
         <Route path="/dashboard/student/:batchNum">
           <ThemeProvider theme={currentTheme}>
             <CssBaseline />

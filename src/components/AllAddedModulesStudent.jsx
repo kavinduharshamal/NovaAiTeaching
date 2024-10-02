@@ -5,20 +5,16 @@ import img2 from "/texture/img_2.png";
 import img3 from "/texture/img_3.png";
 import img4 from "/texture/img_4.png";
 import img5 from "/texture/img_5.png";
+import Cookies from "js-cookie";
 
-const AllAddedModules = ({
-  teacherId,
-  themeMode,
-  selectedBatch,
-  setSelectedBatch, // Now receiving correctly
-}) => {
+const AllAddedModulesStudent = ({ themeMode }) => {
   const [modules, setModules] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [batchNumbers, setBatchNumbers] = useState([]);
+  const batchIdFromCookies = Cookies.get("batchId");
 
   const randomImages = [img1, img2, img3, img4, img5];
-  const apiUrl = `https://novaainew-dvfve3g7bqbneqbv.canadacentral-01.azurewebsites.net/api/GetModulesWithTopicsByTeacherId/${teacherId}`;
+  const apiUrl = `https://novaainew-dvfve3g7bqbneqbv.canadacentral-01.azurewebsites.net/api/Module`;
 
   useEffect(() => {
     const fetchModules = async () => {
@@ -26,20 +22,6 @@ const AllAddedModules = ({
         const response = await axios.get(apiUrl);
         if (response.data && response.data.$values) {
           const modulesData = response.data.$values;
-
-          // Extract unique batch numbers from available modules
-          const uniqueBatches = [
-            ...new Set(
-              modulesData
-                .map((module) =>
-                  module.batchNumber
-                    ? String(module.batchNumber).slice(0, 2)
-                    : null
-                )
-                .filter((batch) => batch !== null)
-            ),
-          ];
-          setBatchNumbers(uniqueBatches);
 
           setModules(modulesData);
         }
@@ -52,22 +34,20 @@ const AllAddedModules = ({
     };
 
     fetchModules();
-  }, [teacherId]);
+  }, []);
 
-  // Filter modules based on the selected batch
-  const filteredModules = selectedBatch
-    ? modules.filter((module) =>
-        String(module.batchNumber).startsWith(selectedBatch)
-      )
-    : modules;
+  // Filter modules based on the batch ID from cookies
+  const filteredModules = modules.filter((module) =>
+    String(module.batchNumber).startsWith(batchIdFromCookies)
+  );
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
   return (
     <div className="w-full px-6 mt-6">
-      {/* Title and Dropdown in a flex container */}
-      <div className="flex items-center justify-between mb-6">
+      {/* Title */}
+      <div className="mb-6">
         <h2
           className={`text-2xl font-bold ${
             themeMode === "dark" ? "text-white" : "text-black-900"
@@ -75,34 +55,6 @@ const AllAddedModules = ({
         >
           All Added Modules
         </h2>
-        {/* Dropdown for selecting Batch */}
-        <div className="flex items-center">
-          <label
-            htmlFor="batchSelect"
-            className={`text-sm font-semibold mr-2 ${
-              themeMode === "dark" ? "text-white" : "text-black-900"
-            }`}
-          >
-            Select Batch:
-          </label>
-          <select
-            id="batchSelect"
-            value={selectedBatch}
-            onChange={(e) => setSelectedBatch(e.target.value)} // Properly use setSelectedBatch
-            className={`p-2 border rounded-md ${
-              themeMode === "dark"
-                ? "bg-gray-700 text-white"
-                : "bg-white text-black"
-            }`}
-          >
-            <option value="">All Batches</option>
-            {batchNumbers.map((batch) => (
-              <option key={batch} value={batch}>
-                {batch}
-              </option>
-            ))}
-          </select>
-        </div>
       </div>
 
       {/* Render filtered modules */}
@@ -114,7 +66,7 @@ const AllAddedModules = ({
               themeMode === "dark" ? "bg-gray-800 text-white" : "bg-white"
             }`}
             onClick={() =>
-              (window.location.href = `/GetTopicsByModuleId/${teacherId}/${module.id}`)
+              (window.location.href = `/GetTopicsByModuleId/${1}/${module.id}`)
             }
           >
             <img
@@ -159,4 +111,4 @@ const AllAddedModules = ({
   );
 };
 
-export default AllAddedModules;
+export default AllAddedModulesStudent;
