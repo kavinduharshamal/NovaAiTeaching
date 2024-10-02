@@ -4,11 +4,13 @@ import Toolbar from "@mui/material/Toolbar";
 import Button from "@mui/material/Button";
 import Switch from "@mui/material/Switch";
 import Typography from "@mui/material/Typography";
-import { useMediaQuery } from "@mui/material";
-import { styled } from "@mui/material/styles";
+import { CssBaseline, useMediaQuery } from "@mui/material";
+import { styled, ThemeProvider } from "@mui/material/styles";
 import Divider from "@mui/material/Divider";
 import Cookies from "js-cookie";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
+import AddModule from "./AddModule";
+import { Css } from "@mui/icons-material";
 
 // Styling the AppBar
 const CustomAppBar = styled(AppBar)(({ theme }) => ({
@@ -50,7 +52,7 @@ const ScheduleButton = styled(Button)(({ theme }) => ({
   marginBottom: "0.8rem",
 }));
 
-const MenuBar = ({ showScheduleButton, toggleTheme, themeMode }) => {
+const MenuBar = ({ showScheduleButton, toggleTheme, themeMode, isHome }) => {
   const isSmallScreen = useMediaQuery("(max-width:600px)");
   const teacherId = Cookies.get("teacherId");
   const { moduleId } = useParams();
@@ -71,46 +73,50 @@ const MenuBar = ({ showScheduleButton, toggleTheme, themeMode }) => {
 
   return (
     <>
-      <CustomAppBar position="static">
-        <CustomToolbar>
-          {/* Left aligned menu buttons */}
-          <div>
-            <CustomButton onClick={() => handleButtonClick("Home")}>
-              Home
-            </CustomButton>
-            <CustomButton onClick={() => handleButtonClick("Events")}>
-              Events
-            </CustomButton>
-            <CustomButton
-              onClick={() => handleButtonClickGuidline("Guidelines")}
-            >
-              Technical Guidelines
-            </CustomButton>
-            <CustomButton
-              onClick={() =>
-                handleButtonClickOnlineReference("Online Reference")
-              }
-            >
-              Online Reference
-            </CustomButton>
-          </div>
-          <div style={{ display: "flex", alignItems: "center" }}>
-            {/* Conditionally show the Schedule button */}
-            {showScheduleButton && (
-              <ScheduleButton
+      <div className="flex">
+        <CustomAppBar position="static">
+          <CustomToolbar>
+            {/* Left aligned menu buttons */}
+            <div>
+              <CustomButton onClick={() => handleButtonClick("Home")}>
+                Home
+              </CustomButton>
+              <CustomButton onClick={() => handleButtonClick("Events")}>
+                Events
+              </CustomButton>
+              <CustomButton
+                onClick={() => handleButtonClickGuidline("Guidelines")}
+              >
+                Technical Guidelines
+              </CustomButton>
+              <CustomButton
                 onClick={() =>
-                  (window.location.href = `/Teacher/inputdata/${teacherId}/${moduleId}`)
+                  handleButtonClickOnlineReference("Online Reference")
                 }
               >
-                Schedule a new Lecture
-              </ScheduleButton>
-            )}
-          </div>
-        </CustomToolbar>
-      </CustomAppBar>
+                Online Reference
+              </CustomButton>
+            </div>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              {/* Conditionally show the Schedule button */}
+              {showScheduleButton && (
+                <ScheduleButton
+                  onClick={() =>
+                    (window.location.href = `/Teacher/inputdata/${teacherId}/${moduleId}`)
+                  }
+                >
+                  Schedule a new Lecture
+                </ScheduleButton>
+              )}
+            </div>
+          </CustomToolbar>
+        </CustomAppBar>
+      </div>
 
       {/* Divider below the MenuBar */}
       <Divider sx={{ borderColor: "#0F4F60", borderWidth: "1px" }} />
+      {/* Conditionally show the AddModule component */}
+      {isHome && <AddModule themeMode={themeMode} />}
     </>
   );
 };

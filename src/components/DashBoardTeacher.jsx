@@ -35,7 +35,7 @@ const DashBoardTeacher = ({ themeMode, toggleTheme }) => {
       <LogoBar themeMode={themeMode} />
 
       {/* Menu Bar without schedule button */}
-      <Menu showScheduleButton={false} themeMode={themeMode} />
+      <Menu showScheduleButton={false} themeMode={themeMode} isHome={true} />
 
       {/* Main Content Section */}
       <div className="p-6 flex flex-wrap w-full">
