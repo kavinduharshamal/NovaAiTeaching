@@ -1,9 +1,12 @@
 import React from "react";
+import { useTheme } from "@mui/material/styles";
 
-const LogoBar = ({ themeMode }) => {
+const LogoBar = () => {
+  const theme = useTheme(); // Use Material UI theme
+
   const styles = {
     navbar: {
-      backgroundColor: themeMode === "dark" ? "#0F4F60" : "#F5F5F5",
+      backgroundColor: theme.palette.background.default,
       height: "90px",
       display: "flex",
       alignItems: "center",
@@ -25,7 +28,7 @@ const LogoBar = ({ themeMode }) => {
     <nav style={styles.navbar}>
       <img
         src={
-          themeMode === "dark"
+          theme.palette.mode === "dark"
             ? "/texture/whiteLogo.png"
             : "/texture/logoBlack.png"
         }
@@ -34,7 +37,7 @@ const LogoBar = ({ themeMode }) => {
       />
       <img
         src={
-          themeMode === "dark"
+          theme.palette.mode === "dark"
             ? "/texture/Title.png"
             : "/texture/Title_black.png"
         }

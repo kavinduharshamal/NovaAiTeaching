@@ -41,20 +41,22 @@ const RecentlyAddedModules = ({ teacherId, themeMode }) => {
   if (error) return <p>{error}</p>;
 
   return (
-    <div className="w-3/4 px-6">
+    <div className="w-full px-6">
       <h2
-        className={`text-2xl font-bold ${
-          themeMode === "dark" ? "text-white" : "text-black-900"
-        } mb-6`}
+        className={`text-2xl font-bold mb-6 ${
+          themeMode === "dark" ? "text-white" : "text-gray-900"
+        }`}
       >
         Recently Added Modules
       </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {modules.map((module, index) => (
           <div
             key={module.id}
-            className={`bg-white shadow-lg rounded-lg overflow-hidden cursor-pointer transition-shadow duration-300 hover:shadow-xl ${
-              themeMode === "dark" ? "bg-gray-800 text-white" : ""
+            className={`shadow-lg rounded-lg overflow-hidden cursor-pointer transition-shadow duration-300 hover:shadow-xl ${
+              themeMode === "dark"
+                ? "bg-gray-800 text-white"
+                : "bg-white text-gray-900"
             }`}
             onClick={() =>
               (window.location.href = `/GetTopicsByModuleId/${teacherId}/${module.id}`)
@@ -67,20 +69,25 @@ const RecentlyAddedModules = ({ teacherId, themeMode }) => {
             />
             <div className="bg-[#0F4F60] text-white p-2">
               <div className="text-sm">
-                <div className="b text-start font-bold">
-                  Batch {module.batchNumber}
-                </div>
+                <div className="font-bold">Batch {module.batchNumber}</div>
               </div>
             </div>
             <div className="p-4">
               <div className="text-m font-semibold mb-2 flex">
                 <span>{module.moduleCode}</span>
-                <span className="ml-2 text-gray-800">
-                  {" "}
+                <span
+                  className={`ml-2 ${
+                    themeMode === "dark" ? "text-gray-300" : "text-gray-800"
+                  }`}
+                >
                   - {module.moduleName}
                 </span>
               </div>
-              <div className="text-sm text-gray-600 mt-2">
+              <div
+                className={`text-sm ${
+                  themeMode === "dark" ? "text-gray-400" : "text-gray-600"
+                } mt-2`}
+              >
                 Semester - {module.semesterNumber}
               </div>
             </div>

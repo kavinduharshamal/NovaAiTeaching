@@ -43,7 +43,7 @@ const AllAddedModules = ({ teacherId, themeMode }) => {
   if (error) return <p>{error}</p>;
 
   return (
-    <div className="w-3/4 px-6 mt-6">
+    <div className="w-full px-6 mt-6">
       <h2
         className={`text-2xl font-bold ${
           themeMode === "dark" ? "text-white" : "text-black-900"
@@ -51,7 +51,7 @@ const AllAddedModules = ({ teacherId, themeMode }) => {
       >
         All Added Modules
       </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {modules.map((module, index) => (
           <div
             key={module.id}

@@ -8,6 +8,7 @@ import { useMediaQuery } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import Divider from "@mui/material/Divider";
 import Cookies from "js-cookie";
+import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 
 // Styling the AppBar
 const CustomAppBar = styled(AppBar)(({ theme }) => ({
@@ -52,9 +53,15 @@ const ScheduleButton = styled(Button)(({ theme }) => ({
 const MenuBar = ({ showScheduleButton, toggleTheme, themeMode }) => {
   const isSmallScreen = useMediaQuery("(max-width:600px)");
   const teacherId = Cookies.get("teacherId");
+  const { moduleId } = useParams();
+
   const handleButtonClick = (page) => {
     console.log(`${page} clicked`);
     window.location.href = `/dashboard/teacher/${teacherId}`;
+  };
+  const handleButtonClickGuidline = (page) => {
+    console.log(`${page} clicked`);
+    window.location.href = "/dashboard/GuidLines";
   };
 
   return (
@@ -73,7 +80,7 @@ const MenuBar = ({ showScheduleButton, toggleTheme, themeMode }) => {
               Online Reference
             </CustomButton>
             <CustomButton
-              onClick={() => handleButtonClick("Technical Guidelines")}
+              onClick={() => handleButtonClickGuidline("Guidelines")}
             >
               Technical Guidelines
             </CustomButton>
@@ -82,7 +89,9 @@ const MenuBar = ({ showScheduleButton, toggleTheme, themeMode }) => {
             {/* Conditionally show the Schedule button */}
             {showScheduleButton && (
               <ScheduleButton
-                onClick={() => (window.location.href = "/inputdata")}
+                onClick={() =>
+                  (window.location.href = `/Teacher/inputdata/${teacherId}/${moduleId}`)
+                }
               >
                 Schedule a new Lecture
               </ScheduleButton>

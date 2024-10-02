@@ -27,6 +27,8 @@ import MenuBar from "./components/MenuBar";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import { TeacherInputData } from "./pages/TeacherInputData";
+import Cookies from "js-cookie";
+import Guidline from "./components/Guidline";
 
 function App() {
   const [isFeedbackVisible, setIsFeedbackVisible] = useState(true);
@@ -37,10 +39,14 @@ function App() {
   const [maxTime, setMaxTime] = useState(60);
   const [hoverGetStarted, setHoverGetStarted] = useState(true);
   const [hoverToggleMusic, setHoverToggleMusic] = useState(true);
-  const [themeMode, setThemeMode] = useState("light");
+  const [themeMode, setThemeMode] = useState(
+    Cookies.get("themeMode") || "light"
+  );
 
   const toggleTheme = () => {
-    setThemeMode((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
+    const newThemeMode = themeMode === "light" ? "dark" : "light";
+    setThemeMode(newThemeMode);
+    Cookies.set("themeMode", newThemeMode, { expires: 7 });
   };
   const currentTheme = themeMode === "light" ? lightTheme : darkTheme;
 
@@ -125,6 +131,12 @@ function App() {
           <ThemeProvider theme={currentTheme}>
             <CssBaseline />
             <Event />
+          </ThemeProvider>
+        </Route>
+        <Route path="/dashboard/GuidLines">
+          <ThemeProvider theme={currentTheme}>
+            <CssBaseline />
+            <Guidline role={"teacher"} />
           </ThemeProvider>
         </Route>
 

@@ -9,6 +9,8 @@ import RecentlyAddedModules from "./RecentlyAddedModules";
 import AllAddedModules from "./AllAddedModules";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
+import ReactionBoard from "./ReactionBoard";
+import ReminderCalendar from "./ReminderCalendar";
 
 const DashBoardTeacher = ({ themeMode, toggleTheme }) => {
   const { teacherId } = useParams();
@@ -21,6 +23,7 @@ const DashBoardTeacher = ({ themeMode, toggleTheme }) => {
       console.log("cookie set"); // Cookie expires in 7 days
     }
   }, [teacherId]);
+
   return (
     <div
       style={{
@@ -37,23 +40,30 @@ const DashBoardTeacher = ({ themeMode, toggleTheme }) => {
       {/* Pass a prop to indicate that this is not the Module details page */}
       <Menu showScheduleButton={false} themeMode={themeMode} />
 
-      {/* Main content layout */}
-      <div className="p-6">
-        {/* Recently Added Modules */}
-        <div className="w-3/4">
-          <RecentlyAddedModules teacherId={teacherId} themeMode={themeMode} />
+      {/* Main content layout with flex container */}
+      <div className="p-6 flex flex-wrap w-full">
+        {/* Recently Added Modules and All Added Modules */}
+        <div className="w-3/4 pr-6">
+          <div className="mb-4">
+            <RecentlyAddedModules teacherId={teacherId} themeMode={themeMode} />
+          </div>
+
+          {/* Horizontal Divider */}
+          <hr
+            className={`border-t-1 my-4 w-full ${
+              themeMode === "dark" ? "border-white" : "border-[#0F4F60]"
+            }`}
+          />
+
+          <div>
+            <AllAddedModules teacherId={teacherId} themeMode={themeMode} />
+          </div>
         </div>
-
-        {/* Horizontal Divider */}
-        <hr
-          className={`border-t-1 my-4 w-3/4 ${
-            themeMode === "dark" ? "border-white" : "border-[#0F4F60]"
-          }`}
-        />
-
-        {/* All Added Modules */}
-        <div className="w-3/4">
-          <AllAddedModules teacherId={teacherId} themeMode={themeMode} />
+        {/* Reaction Board - Takes up 1/4 of the screen */}
+        <div className="w-1/4 flex-col py-9">
+          <ReactionBoard />
+          <div className="h-12"></div>
+          <ReminderCalendar themeMode={themeMode} />
         </div>
       </div>
     </div>
