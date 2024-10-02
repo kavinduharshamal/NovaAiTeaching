@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@mui/material";
 import {
   Environment,
@@ -11,6 +11,7 @@ import {
 import { useFrame, useThree } from "@react-three/fiber";
 import { LayerMaterial, Color, Depth, Noise } from "lamina";
 import { Avtera } from "./Avtera";
+import Cookies from "js-cookie";
 
 const buttonStyleHome = {
   position: "absolute",
@@ -49,9 +50,17 @@ const buttonStyleplayButton = {
 };
 
 export const Experience = (props) => {
+  const [fileName, setFileName] = useState(() => Cookies.get("fileName") || "");
   const [playAudio, setPlayAudio] = useState(false);
   const viewport = useThree((state) => state.viewport);
 
+  useEffect(() => {
+    if (props.playAudio) {
+      setPlayAudio(true);
+    } else {
+      setPlayAudio(false);
+    }
+  }, [props.playAudio]);
   // Reference to the environment mesh
   const environmentRef = useRef();
 
@@ -82,11 +91,12 @@ export const Experience = (props) => {
         scale={2}
         rotation={[-Math.PI / 2, 0, 0]}
         playAudio={playAudio}
+        fileName={fileName}
       />
 
       <directionalLight
-        position={[10, 10, 5]}
-        intensity={0.2}
+        position={[6, 1, 3]}
+        intensity={0.5}
         castShadow
         shadow-mapSize-width={4096}
         shadow-mapSize-height={4096}
@@ -105,32 +115,20 @@ export const Experience = (props) => {
           <sphereGeometry args={[1, 64, 64]} />
           <LayerMaterial side={THREE.BackSide}>
             {/* Set background color as provided in the code */}
-            <Color color="pink" alpha={1} mode="normal" />
+            <Color color="#FFF0D1" alpha={1} mode="normal" />
             <Depth
-              colorA="#705C53" // Gradient start color
-              colorB="#EDDFE0" // Gradient end color
-              alpha={0.5}
+              colorA="#FFF0D1" // Gradient start color
+              colorB="#3B3030" // Gradient end color
+              alpha={1}
               mode="normal"
               near={0}
-              far={300}
+              far={400}
               origin={[100, 100, 100]}
             />
             <Noise mapping="local" type="cell" scale={0.5} mode="softlight" />
           </LayerMaterial>
         </mesh>
       </Environment>
-
-      {/* Material-UI Home Button */}
-      <Html position={[viewport, viewport, 0]}>
-        <a
-          href="/aiteacher"
-          style={{ ...buttonStyleHome }}
-          onMouseOver={(e) => (e.currentTarget.style.transform = "scale(1.2)")}
-          onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
-        >
-          HOME
-        </a>
-      </Html>
 
       {/* Play Button with pointer events enabled */}
       <Html position={[0, 0, 0]}>

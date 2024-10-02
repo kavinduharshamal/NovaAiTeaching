@@ -29,6 +29,10 @@ import Brightness7Icon from "@mui/icons-material/Brightness7";
 import { TeacherInputData } from "./pages/TeacherInputData";
 import Cookies from "js-cookie";
 import Guidline from "./components/Guidline";
+import { PreviewPage } from "./components/PreviewPage";
+import ProfileBar from "./components/ProfileBar";
+import LogoBar from "./components/LogoBar";
+import DashBoardStudent from "./components/DashBoardStudent";
 
 function App() {
   const [isFeedbackVisible, setIsFeedbackVisible] = useState(true);
@@ -163,6 +167,29 @@ function App() {
           </ThemeProvider>
         </Route>
 
+        <Route path="/dashboard/student/:batchNum">
+          <ThemeProvider theme={currentTheme}>
+            <CssBaseline />
+            <IconButton
+              onClick={toggleTheme}
+              style={{
+                position: "absolute",
+                top: 2,
+                left: 10,
+                zIndex: 1000,
+              }}
+              color="inherit"
+            >
+              {themeMode === "light" ? (
+                <Brightness4Icon />
+              ) : (
+                <Brightness7Icon />
+              )}
+            </IconButton>
+            <DashBoardStudent themeMode={themeMode} toggleTheme={toggleTheme} />
+          </ThemeProvider>
+        </Route>
+
         <Route path="/GetTopicsByModuleId/:teacherId/:moduleId">
           <ThemeProvider theme={currentTheme}>
             <CssBaseline />
@@ -187,62 +214,27 @@ function App() {
         </Route>
 
         <Route exact path="/">
-          <ThemeProvider theme={currentTheme}>
-            <CssBaseline />
-            {/* Navbar and main content, includes search and filtered data */}
-            <Navbar />
-            <div>
-              <div
-                className="title rounded-b-xl shadow-lg"
-                style={{
-                  backgroundColor: themeMode === "dark" ? "#333" : "#0F4F60",
-                }}
-              >
-                {/* Rest of the main content */}
-                {/* Dark mode toggle, search bar, and homepage details */}
-                <IconButton
-                  onClick={toggleTheme}
-                  style={{
-                    position: "absolute",
-                    top: 2,
-                    left: 10,
-                    zIndex: 1000,
-                  }}
-                  color="inherit"
-                >
-                  {themeMode === "light" ? (
-                    <Brightness4Icon />
-                  ) : (
-                    <Brightness7Icon />
-                  )}
-                </IconButton>
-              </div>
+          <div style={canvasStyle}>
+            <Canvas shadows camera={{ position: [0, 0, 8], fov: 30 }}>
+              <Suspense>
+                <color attach="background" args={["#"]} />
+                <ExperienceHome />
+              </Suspense>
+            </Canvas>
+            <Loader />
+          </div>
+        </Route>
 
-              {/* Feedback section */}
-              {isFeedbackVisible ? (
-                <div
-                  style={{
-                    transition: "all 0.5s",
-                    width: "1/6",
-                    margin: "20px",
-                  }}
-                >
-                  {/* Feedback content */}
-                </div>
-              ) : (
-                <button
-                  onClick={toggleFeedbackVisibility}
-                  style={{ position: "absolute", top: "10px" }}
-                >
-                  Feedback
-                </button>
-              )}
+        <Route exact path="/preview">
+          <ThemeProvider theme={currentTheme}>
+            <div style={canvasStyle}>
+              <PreviewPage themeMode={themeMode} />
             </div>
           </ThemeProvider>
         </Route>
 
         {/* Routes that are outside the ThemeProvider */}
-        <Route path="/:preview">
+        <Route path="/Learning">
           <div style={canvasStyle}>
             <Canvas shadows camera={{ position: [0, 0, 9.5], fov: 40 }}>
               <Suspense fallback={null}>

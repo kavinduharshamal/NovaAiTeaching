@@ -4,6 +4,8 @@ import axios from "axios";
 import ProfileBar from "./ProfileBar";
 import LogoBar from "./LogoBar";
 import MenuBar from "./MenuBar";
+import Cookies from "js-cookie";
+import { useTheme, Typography, Button } from "@mui/material";
 
 export const ModuleDetails = () => {
   // Define the model inside the component
@@ -34,6 +36,7 @@ export const ModuleDetails = () => {
   const [moduleName, setModuleName] = useState("");
   const [moduleCode, setModuleCode] = useState("");
   const [batchNumber, setBatchId] = useState("");
+  const theme = useTheme();
 
   useEffect(() => {
     const fetchModuleDetails = async () => {
@@ -73,13 +76,51 @@ export const ModuleDetails = () => {
   const handleTopicClick = (topic) => {
     console.log(topic.topicName);
     console.log(moduleCode, batchNumber);
+
     const sanitizedModuleCode = String(moduleCode).replace(/\./g, "");
     const sanitizedBatchNumber = String(batchNumber).replace(/\./g, "");
     console.log(sanitizedModuleCode, sanitizedBatchNumber);
 
     const path = `${sanitizedModuleCode}_${topic.topicName}_${sanitizedBatchNumber}`;
     console.log(path);
-    window.location.href = `/${path}`;
+
+    // Set a timeout before saving the cookie
+    setTimeout(() => {
+      Cookies.set("fileName", `${path}`, { expires: 7 });
+      console.log("Cookie saved");
+      console.log(Cookies.get("fileName"));
+
+      // Redirect after setting the cookie
+      window.location.href = "/Learning";
+    }, 1000); // 1000 ms = 1 second delay
+  };
+
+  const handleSecondaryAction = (topic) => {
+    // Define the action for the right-side button
+    console.log(`Secondary action for topic: ${topic.topicName}`);
+    console.log(topic.topicName);
+    console.log(moduleCode, batchNumber);
+
+    const sanitizedModuleCode = String(moduleCode).replace(/\./g, "");
+    const sanitizedBatchNumber = String(batchNumber).replace(/\./g, "");
+    console.log(sanitizedModuleCode, sanitizedBatchNumber);
+
+    const path = `${sanitizedModuleCode}_${topic.topicName}_${sanitizedBatchNumber}`;
+    console.log(path);
+
+    // Set a timeout before saving the cookie
+    setTimeout(() => {
+      Cookies.set("fileName", `${path}`, { expires: 7 });
+      console.log("Cookie saved");
+      console.log(Cookies.get("fileName"));
+
+      Cookies.set("topicName", `${topic.topicName}`, { expires: 7 });
+      console.log("Cookie saved");
+      console.log(Cookies.get("topicName"));
+
+      // Redirect after setting the cookie
+      window.location.href = "/preview";
+    }, 1000); // 1000 ms = 1 second delay
   };
 
   if (loading) {
@@ -87,32 +128,91 @@ export const ModuleDetails = () => {
   }
 
   return (
-    <div className="">
-      <ProfileBar teacherId={teacherId} type="teacher" />
-      <LogoBar />
-      {/* Pass showScheduleButton as true to show the button on this page */}
-      <MenuBar showScheduleButton={true} />
-      <h1 className="text-3xl font-bold m-6">{moduleName}</h1>
-      <div className="space-y-4">
+    <div
+      style={{
+        backgroundColor: theme.palette.background.default,
+        color: theme.palette.text.primary,
+        minHeight: "100vh",
+      }}
+    >
+      {/* Top Navigation Section */}
+      <div
+        style={{
+          backgroundColor: theme.palette.background.paper,
+          color: theme.palette.text.primary,
+          boxShadow: theme.shadows[4],
+          paddingBottom: "16px",
+        }}
+      >
+        <ProfileBar teacherId={teacherId} type="teacher" />
+        <LogoBar />
+        {/* Pass showScheduleButton as true to show the button on this page */}
+        <MenuBar showScheduleButton={true} />
+      </div>
+
+      {/* Main Content Area */}
+      <Typography
+        variant="h4"
+        style={{ margin: "24px 0", color: theme.palette.text.primary }}
+        className="px-7 font-bold "
+      >
+        {moduleName}
+      </Typography>
+      <div className="space-y-4 px-16 py-2">
         {topics.length > 0 ? (
           topics.map((topic) => (
             <div
               key={topic.id}
-              className="border border-gray-300 rounded-lg p-4 bg-white shadow-sm max-w-5xl"
+              style={{
+                border: `1px solid ${theme.palette.divider}`,
+                borderRadius: "8px",
+                padding: "16px",
+                boxShadow: theme.shadows[2],
+                backgroundColor: theme.palette.background.paper,
+                color: theme.palette.text.primary,
+                transition: "transform 0.3s ease-in-out",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                cursor: "pointer",
+              }}
+              className="card-hover"
+              onClick={() => handleTopicClick(topic)} // Make the div clickable
             >
-              {/* Add a button to trigger an action */}
-              <button
-                onClick={() => handleTopicClick(topic)}
-                className="text-black font-medium hover:underline focus:outline-none bg-gray-100 p-2 rounded"
+              {/* Main content - topic name */}
+              <Typography
+                variant="h6"
+                style={{
+                  color: theme.palette.text.primary,
+                  marginBottom: "0",
+                }}
               >
                 {topic.topicName}
-              </button>
+              </Typography>
+
+              {/* Button on the right side */}
+              <Button
+                onClick={(e) => {
+                  e.stopPropagation(); // Prevent the div's onClick from firing
+                  handleSecondaryAction(topic);
+                }}
+                variant="outlined"
+                color="primary"
+                style={{
+                  color: theme.palette.primary.main,
+                }}
+              >
+                Preview Page
+              </Button>
             </div>
           ))
         ) : (
-          <div>No topics found</div>
+          <Typography variant="body1" color="textSecondary">
+            No topics found
+          </Typography>
         )}
       </div>
+      <div className="p-16"></div>
     </div>
   );
 };

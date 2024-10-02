@@ -1,0 +1,11 @@
+{
+  "metadata": {
+    "soundFile": "/Users/kavinduharshamal/Desktop/aiTeacherReact/NovaAiTeaching/public/audio/211_new_211/4.wav",
+    "duration": 0.86
+  },
+  "mouthCues": [
+    { "start": 0.00, "end": 0.18, "value": "X" },
+    { "start": 0.18, "end": 0.58, "value": "D" },
+    { "start": 0.58, "end": 0.86, "value": "X" }
+  ]
+}

@@ -3,6 +3,7 @@ import { Switch, FormControlLabel } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import LogoWhite from "./LogoWhite";
+import Cookies from "js-cookie";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -47,7 +48,8 @@ const Login = () => {
         if (response.ok) {
           // Successful teacher login
           console.log("Login successful:", data);
-          const teacherId = data.id; // Assuming the ID is in the response
+          const teacherId = data.id;
+          Cookies.set("teacherId", `${teacherId}`, { expires: 7 });
           window.location.href = `http://localhost:5173/dashboard/Teacher/${teacherId}`;
         } else {
           setErrorMessage(data.message || "Invalid email or password");
@@ -78,8 +80,12 @@ const Login = () => {
         if (response.ok) {
           // Successful student login
           console.log("Student login successful:", data);
-          const batchId = data.batchId;
-          window.location.href = `/Student/${batchId}`; // Redirecting to student's batch page
+          const batchId = data.batchID;
+          console.log(data.batchID);
+          console.log(data.id);
+          Cookies.set("studentId", `${data.id}`, { expires: 7 });
+          Cookies.set("batchId", `${data.batchID}`, { expires: 7 });
+          window.location.href = `/dashboard/Student/${batchId}`; // Redirecting to student's batch page
         } else {
           setErrorMessage(data.message || "Invalid email or password");
         }
