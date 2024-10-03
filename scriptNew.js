@@ -15,7 +15,7 @@ dotenv.config();
 
 const openai = new OpenAI({
   apiKey:
-    "sk-DtWz4-FxYIvPAdx7HMs75Jqbl3wKcsJwuvILEkrjHNT3BlbkFJRS92ehofi0cg9n3lGPIoanI6vpReD4yjbmhSfVfkcA", // Your OpenAI API key here, I used "-" to avoid errors when the key is not set but you should not do that
+    "sk-kopAMaqE-G5zxOxIH4BHU10Wm-fmYyfvT8YFGjmCk0T3BlbkFJ6HX8mdhaI8FYfgeaQrY3WrtDF0nzgWpUc75qEBL44A", // Your OpenAI API key here, I used "-" to avoid errors when the key is not set but you should not do that
 });
 
 const elevenLabsApiKey = "sk_170bdf6c43f204e85ea281e9f68b0f926cc406d66fe9bf3d"; // Your ElevenLabs API key

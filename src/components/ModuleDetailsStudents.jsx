@@ -39,6 +39,7 @@ export const ModuleDetailsStudents = ({ themeMode }) => {
   const [moduleCode, setModuleCode] = useState("");
   const [batchNumber, setBatchId] = useState("");
   const theme = useTheme();
+  const [divHeight, setDivHeight] = useState("60vh");
 
   useEffect(() => {
     const fetchModuleDetails = async () => {
@@ -71,6 +72,26 @@ export const ModuleDetailsStudents = ({ themeMode }) => {
 
     fetchModuleDetails();
   }, [moduleId]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const contentHeight = document.documentElement.scrollHeight;
+      const viewportHeight = window.innerHeight;
+
+      if (contentHeight > viewportHeight) {
+        setDivHeight("20vh");
+      } else {
+        setDivHeight("60vh");
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    handleResize(); // Call on initial load
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [topics]);
 
   const handleTopicClick = (topic) => {
     console.log(topic.topicName);
@@ -196,7 +217,10 @@ export const ModuleDetailsStudents = ({ themeMode }) => {
           </Typography>
         )}
       </div>
-      <div className="p-16"></div>
+      <div
+        style={{ height: divHeight, transition: "height 0.3s ease-in-out" }}
+        className="p-16"
+      ></div>
       <Footer themeMode={themeMode} />
     </div>
   );

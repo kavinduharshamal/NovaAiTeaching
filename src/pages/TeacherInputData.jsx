@@ -33,7 +33,7 @@ import LogoBar from "../components/LogoBar";
 import MenuBar from "../components/MenuBar";
 
 const API_KEY =
-  "sk-DtWz4-FxYIvPAdx7HMs75Jqbl3wKcsJwuvILEkrjHNT3BlbkFJRS92ehofi0cg9n3lGPIoanI6vpReD4yjbmhSfVfkcA";
+  "sk-gQounD-WSGtXP1LEzKfQtyBhIk7-NCDUV6CuotDQOIT3BlbkFJKC4ITIm4Qq8VadoVV5ZTI5qKRCvs3_SaWJJSKCsXsA";
 
 const systemMessage = {
   role: "system",
@@ -112,6 +112,13 @@ export function TeacherInputData({ themeMode }) {
   };
 
   const handleGenerateLecture = async () => {
+    // Validate that each content field has a file
+    const missingFileIndex = contentFields.findIndex((field) => !field.file);
+    if (missingFileIndex !== -1) {
+      toast.error(`Please attach a file for Content ${missingFileIndex + 1}`);
+      return;
+    }
+
     setIsLoading(true); // Show loading indicator
 
     // Prepare formData for the first API call
@@ -125,14 +132,6 @@ export function TeacherInputData({ themeMode }) {
       formData.append(`contents[${index}][content]`, field.content);
       if (field.file) {
         formData.append(`${index + 1}`, field.file);
-      } else {
-        formData.append(
-          `${index + 1}`,
-          new File(
-            [""],
-            "/Users/kavinduharshamal/Desktop/aiTeacherReact/NovaAiTeaching/public/texture/github.png"
-          )
-        );
       }
     });
 
@@ -150,9 +149,9 @@ export function TeacherInputData({ themeMode }) {
       toast.success("Lecture generated successfully!");
 
       // Prepare payload for the second API call
-      const urls = contentFields
-        .filter((field) => field.file !== null)
-        .map((field) => URL.createObjectURL(field.file));
+      const urls = contentFields.map((field) =>
+        URL.createObjectURL(field.file)
+      );
 
       const payload = {
         id: 0,
@@ -267,7 +266,6 @@ export function TeacherInputData({ themeMode }) {
     <>
       <ProfileBar teacherId={teacherId} type="teacher" themeMode={themeMode} />
       <LogoBar themeMode={themeMode} />
-      {/* Pass a prop to indicate that this is not the Module details page */}
       <MenuBar showScheduleButton={false} themeMode={themeMode} />
       <Box sx={{ padding: 2, position: "relative" }}>
         {/* Full-screen loading overlay */}
@@ -296,7 +294,7 @@ export function TeacherInputData({ themeMode }) {
           sx={{ marginBottom: 2 }}
         />
         <TextField
-          label="Name of Lecture"
+          label="Topic Name"
           variant="outlined"
           fullWidth
           value={nameOfLecture}
@@ -350,7 +348,7 @@ export function TeacherInputData({ themeMode }) {
               startIcon={<AddIcon />}
               onClick={addContentField}
               sx={{
-                maxWidth: "20vw", // Set max width to 20% of the viewport width
+                maxWidth: "20vw",
                 marginBottom: 2,
               }}
             >
@@ -363,7 +361,7 @@ export function TeacherInputData({ themeMode }) {
             color="primary"
             onClick={handleGenerateLecture}
             sx={{
-              maxWidth: "20vw", // Set max width to 20% of the viewport width
+              maxWidth: "20vw",
               marginTop: 2,
             }}
             disabled={isLoading}
@@ -372,7 +370,6 @@ export function TeacherInputData({ themeMode }) {
           </Button>
         </div>
 
-        {/* Chat Button */}
         {!showPopup && (
           <Fab
             color="primary"
@@ -418,7 +415,6 @@ export function TeacherInputData({ themeMode }) {
                     backgroundColor: theme.palette.background.paper,
                   }}
                 >
-                  {/* Draggable Handle */}
                   <Box
                     sx={{
                       display: "flex",

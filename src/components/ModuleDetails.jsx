@@ -9,17 +9,15 @@ import { useTheme, Typography, Button } from "@mui/material";
 import Footer from "./Footer";
 
 export const ModuleDetails = ({ themeMode }) => {
-  // Define the model inside the component
   class TopicModel {
     constructor(id, moduleId, topicName, url1, batchId) {
       this.id = id;
       this.moduleId = moduleId;
       this.topicName = topicName;
-      this.url1 = url1; // Assuming only one URL for the topic name
+      this.url1 = url1;
       this.batchId = batchId;
     }
 
-    // Static method to map raw API data to an instance of TopicModel
     static fromApi(data) {
       return new TopicModel(
         data.id,
@@ -38,6 +36,7 @@ export const ModuleDetails = ({ themeMode }) => {
   const [moduleCode, setModuleCode] = useState("");
   const [batchNumber, setBatchId] = useState("");
   const theme = useTheme();
+  const [divHeight, setDivHeight] = useState("60vh");
 
   useEffect(() => {
     const fetchModuleDetails = async () => {
@@ -57,9 +56,7 @@ export const ModuleDetails = ({ themeMode }) => {
         setModuleCode(ModuleName.data.moduleCode);
         setBatchId(BatchNumber.data.$values[0].batchNumber);
 
-        // Extract the $values array from the response
         const topicsArray = response.data.$values;
-        // Map the topics array to TopicModel instances
         const mappedTopics = topicsArray.map((topic) =>
           TopicModel.fromApi(topic)
         );
@@ -74,6 +71,26 @@ export const ModuleDetails = ({ themeMode }) => {
     fetchModuleDetails();
   }, [moduleId]);
 
+  useEffect(() => {
+    const handleResize = () => {
+      const contentHeight = document.documentElement.scrollHeight;
+      const viewportHeight = window.innerHeight;
+
+      if (contentHeight > viewportHeight) {
+        setDivHeight("20vh");
+      } else {
+        setDivHeight("60vh");
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    handleResize(); // Call on initial load
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [topics]);
+
   const handleTopicClick = (topic) => {
     console.log(topic.topicName);
     console.log(moduleCode, batchNumber);
@@ -85,19 +102,15 @@ export const ModuleDetails = ({ themeMode }) => {
     const path = `${sanitizedModuleCode}_${topic.topicName}_${sanitizedBatchNumber}`;
     console.log(path);
 
-    // Set a timeout before saving the cookie
     setTimeout(() => {
       Cookies.set("fileName", `${path}`, { expires: 7 });
       console.log("Cookie saved");
       console.log(Cookies.get("fileName"));
-
-      // Redirect after setting the cookie
       window.location.href = "/Learning";
-    }, 1000); // 1000 ms = 1 second delay
+    }, 1000);
   };
 
   const handleSecondaryAction = (topic) => {
-    // Define the action for the right-side button
     console.log(`Secondary action for topic: ${topic.topicName}`);
     console.log(topic.topicName);
     console.log(moduleCode, batchNumber);
@@ -109,19 +122,13 @@ export const ModuleDetails = ({ themeMode }) => {
     const path = `${sanitizedModuleCode}_${topic.topicName}_${sanitizedBatchNumber}`;
     console.log(path);
 
-    // Set a timeout before saving the cookie
     setTimeout(() => {
       Cookies.set("fileName", `${path}`, { expires: 7 });
-      console.log("Cookie saved");
-      console.log(Cookies.get("fileName"));
-
       Cookies.set("topicName", `${topic.topicName}`, { expires: 7 });
       console.log("Cookie saved");
       console.log(Cookies.get("topicName"));
-
-      // Redirect after setting the cookie
       window.location.href = "/preview";
-    }, 1000); // 1000 ms = 1 second delay
+    }, 1000);
   };
 
   if (loading) {
@@ -136,7 +143,6 @@ export const ModuleDetails = ({ themeMode }) => {
         minHeight: "100vh",
       }}
     >
-      {/* Top Navigation Section */}
       <div
         style={{
           backgroundColor: theme.palette.background.paper,
@@ -147,11 +153,9 @@ export const ModuleDetails = ({ themeMode }) => {
       >
         <ProfileBar teacherId={teacherId} type="teacher" />
         <LogoBar />
-        {/* Pass showScheduleButton as true to show the button on this page */}
         <MenuBar showScheduleButton={true} themeMode={themeMode} />
       </div>
 
-      {/* Main Content Area */}
       <Typography
         variant="h4"
         style={{ margin: "24px 0", color: theme.palette.text.primary }}
@@ -178,9 +182,8 @@ export const ModuleDetails = ({ themeMode }) => {
                 cursor: "pointer",
               }}
               className="card-hover"
-              onClick={() => handleTopicClick(topic)} // Make the div clickable
+              onClick={() => handleTopicClick(topic)}
             >
-              {/* Main content - topic name */}
               <Typography
                 variant="h6"
                 style={{
@@ -191,10 +194,9 @@ export const ModuleDetails = ({ themeMode }) => {
                 {topic.topicName}
               </Typography>
 
-              {/* Button on the right side */}
               <Button
                 onClick={(e) => {
-                  e.stopPropagation(); // Prevent the div's onClick from firing
+                  e.stopPropagation();
                   handleSecondaryAction(topic);
                 }}
                 variant="outlined"
@@ -213,7 +215,10 @@ export const ModuleDetails = ({ themeMode }) => {
           </Typography>
         )}
       </div>
-      <div className="p-16"></div>
+      <div
+        style={{ height: divHeight, transition: "height 0.3s ease-in-out" }}
+        className="p-16"
+      ></div>
       <Footer themeMode={themeMode} />
     </div>
   );

@@ -16,8 +16,19 @@ export const UI = ({ hidden, ...props }) => {
   };
 
   const navigateToHome = () => {
-    window.location.href = `/dashboard/student/${Cookies.get("batchId")}`;
+    const currentUser = Cookies.get("currentUser");
+    console.log(currentUser);
+    if (currentUser === "teacher") {
+      const teacherId = Cookies.get("teacherId");
+
+      window.location.href = `/dashboard/teacher/${teacherId}`;
+    } else if (currentUser === "student") {
+      const batchId = Cookies.get("batchId");
+      console.log(currentUser);
+      window.location.href = `/dashboard/student/${batchId}`;
+    }
   };
+
   if (hidden) {
     return null;
   }

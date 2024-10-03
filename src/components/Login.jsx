@@ -50,6 +50,8 @@ const Login = () => {
         if (response.ok) {
           const teacherId = data.id;
           Cookies.set("teacherId", `${teacherId}`, { expires: 7 });
+          Cookies.set("currentUser", "teacher", { expires: 7 });
+
           window.location.href = `http://localhost:5173/dashboard/Teacher/${teacherId}`;
         } else {
           setErrorMessage(data.message || "Invalid email or password");
@@ -80,6 +82,7 @@ const Login = () => {
           });
           Cookies.set("studentId", `${data.id}`, { expires: 7 });
           Cookies.set("batchId", `${batchId}`, { expires: 7 });
+          Cookies.set("currentUser", "student", { expires: 7 });
 
           window.location.href = `/dashboard/Student/${batchId}`; // Redirecting to student's batch page
         } else {

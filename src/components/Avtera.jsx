@@ -6,6 +6,7 @@ import * as THREE from "three";
 import { FloorFBX } from "./FloorFBX";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 import { Classroom } from "./Calssroom";
+import Cookies from "js-cookie";
 
 const corresponding = {
   A: "viseme_PP",
@@ -158,7 +159,13 @@ export function Avtera(props) {
 
           // Add this line to show "All are done" in the console when all audio is complete
           console.log("All are done");
-          window.location.href = "/gpt";
+          if (Cookies.get("currentUser") == "student") {
+            window.location.href = "/gpt";
+          } else {
+            window.location.href = `/dashboard/teacher/${Cookies.get(
+              "teacherId"
+            )}`;
+          }
         }
       };
     } else if (audioStopped) {

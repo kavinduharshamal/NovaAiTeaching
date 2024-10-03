@@ -4,6 +4,7 @@ import ProfileBar from "./ProfileBar";
 import LogoBar from "./LogoBar";
 import MenuBar from "./MenuBar";
 import Footer from "./Footer";
+import Cookies from "js-cookie";
 
 const OnlineReference = ({ themeMode }) => {
   const theme = useTheme();
@@ -36,7 +37,7 @@ const OnlineReference = ({ themeMode }) => {
           backgroundColor: themeMode.palette.primary.main,
         }}
       >
-        <ProfileBar teacherId={1} type={"student"} />
+        <ProfileBar teacherId={Cookies.get("teacherId")} type={"teacher"} />
         <LogoBar />
         <MenuBar />
       </div>

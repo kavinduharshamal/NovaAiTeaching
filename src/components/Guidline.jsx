@@ -55,7 +55,7 @@ const Guideline = ({ role, themeMode }) => {
 
   return (
     <>
-      <ProfileBar teacherId={1} type={"student"} />
+      <ProfileBar teacherId={Cookies.get("teacherId")} type={"teacher"} />
       <LogoBar />
       <MenuBar />
       <div
