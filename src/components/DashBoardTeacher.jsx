@@ -10,6 +10,7 @@ import ReminderCalendar from "./ReminderCalendar";
 import DashboardModules from "./DashboardModules";
 import Noticeboard from "./Noticeboard";
 import AddModule from "./AddModule";
+import QandA from "./QandA";
 
 const DashBoardTeacher = ({ themeMode, toggleTheme }) => {
   const { teacherId } = useParams();
@@ -31,6 +32,7 @@ const DashBoardTeacher = ({ themeMode, toggleTheme }) => {
         color: theme.palette.text.primary,
       }}
     >
+      <QandA />
       {/* Profile Bar and Logo Bar */}
       <ProfileBar teacherId={teacherId} type="teacher" themeMode={themeMode} />
       <LogoBar themeMode={themeMode} />

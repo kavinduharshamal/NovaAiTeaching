@@ -42,9 +42,9 @@ const CustomButton = styled(Button)(({ theme }) => ({
 }));
 
 // Styling for the Schedule button
-const ScheduleButton = styled(Button)(({ theme }) => ({
+const ScheduleButton = styled(Button)(({ theme, themeMode }) => ({
   backgroundColor: theme.palette.primary.main,
-  color: theme.palette.text.secondary,
+  color: themeMode === "light" ? "white" : theme.palette.text.secondary,
   borderRadius: "12px",
   cursor: "pointer",
   fontSize: "10px",
@@ -101,6 +101,7 @@ const MenuBar = ({ showScheduleButton, toggleTheme, themeMode, isHome }) => {
               {/* Conditionally show the Schedule button */}
               {showScheduleButton && (
                 <ScheduleButton
+                  themeMode={themeMode}
                   onClick={() =>
                     (window.location.href = `/Teacher/inputdata/${teacherId}/${moduleId}`)
                   }

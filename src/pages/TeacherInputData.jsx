@@ -12,6 +12,7 @@ import {
   Fab,
   Backdrop,
   Menu,
+  useTheme,
 } from "@mui/material";
 import {
   AttachFile as AttachFileIcon,
@@ -32,7 +33,7 @@ import LogoBar from "../components/LogoBar";
 import MenuBar from "../components/MenuBar";
 
 const API_KEY =
-  "sk-tYrg6PAH8-T5J1kY0oBnraQVv_60NPIdzJzizP1lnST3BlbkFJEQyf3QkoJJ-bwiwRfMxfcxD5RHym8kLRJ00nbmBRAA";
+  "sk-cL1QW7PdAhLNrdKQsWhIl5yKXJywMLKAph_Jicb0bkT3BlbkFJ-EDTbgC6EePHY45S27JBjvM-h19EAwdwWe0i4J8fcA";
 
 const systemMessage = {
   role: "system",
@@ -41,6 +42,7 @@ const systemMessage = {
 };
 
 export function TeacherInputData({ themeMode }) {
+  const theme = useTheme();
   const [contentFields, setContentFields] = useState([
     { id: 1, content: "", file: null },
   ]);
@@ -232,6 +234,7 @@ export function TeacherInputData({ themeMode }) {
         { message: gptMessage, sender: "ChatGPT" },
       ]);
     } catch (error) {
+      console.error("API Error:", error);
       toast.error(
         "An error occurred while fetching the response from ChatGPT."
       );
@@ -258,6 +261,7 @@ export function TeacherInputData({ themeMode }) {
   const handleMinimizeChat = () => {
     setShowPopup(false);
   };
+  console.log(themeMode);
 
   return (
     <>
@@ -339,25 +343,34 @@ export function TeacherInputData({ themeMode }) {
           </Box>
         ))}
 
-        {contentFields.length < 5 && (
-          <Button
-            variant="outlined"
-            startIcon={<AddIcon />}
-            onClick={addContentField}
-          >
-            Add More Content
-          </Button>
-        )}
+        <div className="flex flex-col">
+          {contentFields.length < 5 && (
+            <Button
+              variant="outlined"
+              startIcon={<AddIcon />}
+              onClick={addContentField}
+              sx={{
+                maxWidth: "20vw", // Set max width to 20% of the viewport width
+                marginBottom: 2,
+              }}
+            >
+              Add More Content
+            </Button>
+          )}
 
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleGenerateLecture}
-          sx={{ marginTop: 2 }}
-          disabled={isLoading}
-        >
-          Generate Lecture
-        </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleGenerateLecture}
+            sx={{
+              maxWidth: "20vw", // Set max width to 20% of the viewport width
+              marginTop: 2,
+            }}
+            disabled={isLoading}
+          >
+            Generate Lecture
+          </Button>
+        </div>
 
         {/* Chat Button */}
         {!showPopup && (
@@ -375,7 +388,6 @@ export function TeacherInputData({ themeMode }) {
           </Fab>
         )}
 
-        {/* Chat Popup */}
         {showPopup && (
           <Draggable handle=".draggable-handle">
             <div
@@ -403,6 +415,7 @@ export function TeacherInputData({ themeMode }) {
                     boxShadow: "2px 2px 8px rgba(0, 0, 0, 0.3)",
                     overflow: "hidden",
                     position: "relative",
+                    backgroundColor: theme.palette.background.paper,
                   }}
                 >
                   {/* Draggable Handle */}
@@ -412,16 +425,26 @@ export function TeacherInputData({ themeMode }) {
                       justifyContent: "space-between",
                       alignItems: "center",
                       padding: 2,
-                      backgroundColor: "#3f51b5",
-                      color: "#fff",
+                      backgroundColor: theme.palette.primary.dark,
+                      color: theme.palette.text.primary,
                       cursor: "move",
                     }}
                     className="draggable-handle"
                   >
-                    <Typography variant="h6">Chat with ChatGPT</Typography>
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        color:
+                          theme.palette.mode === "dark"
+                            ? theme.palette.text.primary
+                            : theme.palette.common.white,
+                      }}
+                    >
+                      Chat with ChatGPT
+                    </Typography>
                     <IconButton
                       onClick={handleMinimizeChat}
-                      sx={{ color: "#fff" }}
+                      sx={{ color: theme.palette.text.primary }}
                     >
                       <MinimizeIcon />
                     </IconButton>
@@ -432,7 +455,7 @@ export function TeacherInputData({ themeMode }) {
                       flexGrow: 1,
                       overflowY: "auto",
                       padding: 2,
-                      backgroundColor: "#ffffff",
+                      backgroundColor: theme.palette.background.default,
                     }}
                   >
                     {messages.map((message, index) => (
@@ -453,7 +476,9 @@ export function TeacherInputData({ themeMode }) {
                             padding: 1.5,
                             borderRadius: 2,
                             backgroundColor:
-                              message.sender === "user" ? "#DCF8C6" : "#f1f1f1",
+                              message.sender === "user"
+                                ? "gray"
+                                : theme.palette.background.paper,
                             boxShadow: "1px 1px 4px rgba(0, 0, 0, 0.1)",
                             position: "relative",
                           }}
@@ -465,8 +490,8 @@ export function TeacherInputData({ themeMode }) {
                               marginBottom: 0.5,
                               color:
                                 message.sender === "ChatGPT"
-                                  ? "#3f51b5"
-                                  : "#000",
+                                  ? theme.palette.primary.main
+                                  : theme.palette.text.primary,
                             }}
                           >
                             {message.sender === "user" ? "You" : "ChatGPT"}
@@ -484,7 +509,7 @@ export function TeacherInputData({ themeMode }) {
                                 position: "absolute",
                                 top: 5,
                                 right: 5,
-                                color: "#3f51b5",
+                                color: theme.palette.common.white,
                               }}
                             >
                               <ContentCopyIcon sx={{ fontSize: "12px" }} />
@@ -504,7 +529,7 @@ export function TeacherInputData({ themeMode }) {
                             maxWidth: "60%",
                             padding: 1.5,
                             borderRadius: 2,
-                            backgroundColor: "#f1f1f1",
+                            backgroundColor: theme.palette.background.paper,
                             boxShadow: "1px 1px 4px rgba(0, 0, 0, 0.1)",
                           }}
                         >
@@ -525,8 +550,8 @@ export function TeacherInputData({ themeMode }) {
                       display: "flex",
                       alignItems: "center",
                       padding: 2,
-                      borderTop: "1px solid #ddd",
-                      backgroundColor: "#f9f9f9",
+                      borderTop: `1px solid ${theme.palette.divider}`,
+                      backgroundColor: theme.palette.background.paper,
                     }}
                   >
                     <TextField
@@ -535,7 +560,13 @@ export function TeacherInputData({ themeMode }) {
                       placeholder="Type your message here..."
                       value={inputData}
                       onChange={(e) => setInputData(e.target.value)}
-                      sx={{ marginRight: 2 }}
+                      sx={{
+                        marginRight: 2,
+                        backgroundColor: theme.palette.background.default,
+                      }}
+                      InputLabelProps={{
+                        style: { color: theme.palette.text.secondary },
+                      }}
                     />
                     <Button
                       variant="contained"
