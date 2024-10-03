@@ -155,6 +155,10 @@ export function Avtera(props) {
           audio.pause();
           audio.currentTime = 0;
           setAudioStopped(true);
+
+          // Add this line to show "All are done" in the console when all audio is complete
+          console.log("All are done");
+          window.location.href = "/gpt";
         }
       };
     } else if (audioStopped) {

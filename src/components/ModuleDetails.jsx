@@ -7,7 +7,7 @@ import MenuBar from "./MenuBar";
 import Cookies from "js-cookie";
 import { useTheme, Typography, Button } from "@mui/material";
 
-export const ModuleDetails = () => {
+export const ModuleDetails = ({ themeMode }) => {
   // Define the model inside the component
   class TopicModel {
     constructor(id, moduleId, topicName, url1, batchId) {
@@ -147,7 +147,7 @@ export const ModuleDetails = () => {
         <ProfileBar teacherId={teacherId} type="teacher" />
         <LogoBar />
         {/* Pass showScheduleButton as true to show the button on this page */}
-        <MenuBar showScheduleButton={true} />
+        <MenuBar showScheduleButton={true} themeMode={themeMode} />
       </div>
 
       {/* Main Content Area */}

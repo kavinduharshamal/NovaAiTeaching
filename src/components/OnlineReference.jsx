@@ -74,7 +74,6 @@ const OnlineReference = () => {
           >
             <h2
               style={{
-                fontFamily: "Georgia, serif",
                 fontSize: "40px",
                 color: titleColor,
               }}
@@ -84,7 +83,7 @@ const OnlineReference = () => {
             <ul
               style={{
                 paddingLeft: "20px",
-                fontFamily: "Arial, sans-serif",
+
                 fontSize: "15px",
                 color: textColor,
               }}
@@ -108,7 +107,6 @@ const OnlineReference = () => {
 
             <h2
               style={{
-                fontFamily: "Georgia, serif",
                 fontSize: "40px",
                 marginTop: "20px",
                 color: titleColor,
@@ -119,8 +117,8 @@ const OnlineReference = () => {
             <ul
               style={{
                 paddingLeft: "20px",
-                fontFamily: "Arial, sans-serif",
-                fontSize: "14px",
+
+                fontSize: "15px",
                 color: textColor,
               }}
             >

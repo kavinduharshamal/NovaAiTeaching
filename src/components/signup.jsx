@@ -3,7 +3,7 @@ import axios from "axios";
 import LogoWhite from "./LogoWhite";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { Switch, FormControlLabel } from "@mui/material";
+import { Switch, FormControlLabel, CircularProgress } from "@mui/material";
 
 const SignIn = () => {
   const [firstname, setUserFirstname] = useState("");
@@ -15,6 +15,7 @@ const SignIn = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [userType, setUserType] = useState("student");
+  const [loading, setLoading] = useState(false); // Loading state
 
   const handleSignIn = async () => {
     if (!firstname || !lastname || !email || !password || !confirmPassword) {
@@ -45,8 +46,10 @@ const SignIn = () => {
       email,
       password,
       userType,
-      batchNo: userType === "student" ? batchNo : undefined, // Include batch number only for students
+      batchID: userType === "student" ? Number(batchNo) : undefined, // Include batch number only for students
     };
+
+    setLoading(true); // Start loading
 
     try {
       // Determine the API endpoint based on user type
@@ -64,6 +67,8 @@ const SignIn = () => {
     } catch (error) {
       setErrorMessage("Error creating account. Please try again.");
       console.error("There was an error creating the account!", error);
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
 
@@ -179,8 +184,6 @@ const SignIn = () => {
             style={{ position: "relative", width: "150%", height: "60px" }}
             className="my-4"
           >
-            {" "}
-            {/* Add margin to create space */}
             <input
               type={showPassword ? "text" : "password"}
               placeholder="Confirm Password"
@@ -216,8 +219,13 @@ const SignIn = () => {
           onClick={handleSignIn}
           style={{ width: "150%", height: "60px", backgroundColor: "#7FC7D9" }}
           className="mt-4 hover:bg-blue-700 text-white font-bold rounded focus:outline-none focus:shadow-outline"
+          disabled={loading} // Disable button while loading
         >
-          Create Account
+          {loading ? (
+            <CircularProgress size={24} style={{ color: "white" }} />
+          ) : (
+            "Create Account"
+          )}
         </button>
       </div>
     </div>

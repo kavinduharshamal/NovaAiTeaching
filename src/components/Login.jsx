@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Switch, FormControlLabel } from "@mui/material";
+import { Switch, FormControlLabel, CircularProgress } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import LogoWhite from "./LogoWhite";
@@ -13,6 +13,7 @@ const Login = () => {
   const [passwordActive, setPasswordActive] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false); // Loading state
 
   const handleUsernameFocus = () => {
     setUsernameActive(true);
@@ -25,10 +26,11 @@ const Login = () => {
   };
 
   const handleLogin = async () => {
-    console.log("pressed");
-    if (userType === "teacher") {
-      // Teacher login API call
-      try {
+    setLoading(true); // Start loading when login starts
+    setErrorMessage(""); // Clear any previous error messages
+    try {
+      if (userType === "teacher") {
+        // Teacher login API call
         const response = await fetch(
           "https://novaainew-dvfve3g7bqbneqbv.canadacentral-01.azurewebsites.net/api/Teacher/login",
           {
@@ -46,23 +48,14 @@ const Login = () => {
         const data = await response.json();
 
         if (response.ok) {
-          // Successful teacher login
-          console.log("Login successful:", data);
           const teacherId = data.id;
           Cookies.set("teacherId", `${teacherId}`, { expires: 7 });
-          window.location.href = `http://localhost:5173/dashboard/Teacher/${Cookies.get(
-            "teacherId"
-          )}`;
+          window.location.href = `http://localhost:5173/dashboard/Teacher/${teacherId}`;
         } else {
           setErrorMessage(data.message || "Invalid email or password");
         }
-      } catch (error) {
-        console.error("Error during teacher login:", error);
-        setErrorMessage("An error occurred during login");
-      }
-    } else if (userType === "student") {
-      // Student login API call
-      try {
+      } else if (userType === "student") {
+        // Student login API call
         const response = await fetch(
           "https://novaainew-dvfve3g7bqbneqbv.canadacentral-01.azurewebsites.net/api/Student/login",
           {
@@ -80,30 +73,26 @@ const Login = () => {
         const data = await response.json();
 
         if (response.ok) {
-          // Successful student login
           const batchId = parseInt(data.batchID);
-          console.log(batchId);
-
           const batchIdWithoutDot = String(data.batchID).replace(/\./g, "");
           Cookies.set("batchIdWithoutDot", `${batchIdWithoutDot}`, {
             expires: 7,
           });
-          console.log(data.batchID);
-          console.log(data.id);
           Cookies.set("studentId", `${data.id}`, { expires: 7 });
           Cookies.set("batchId", `${batchId}`, { expires: 7 });
 
-          console.log(Cookies.get("batchId"));
           window.location.href = `/dashboard/Student/${batchId}`; // Redirecting to student's batch page
         } else {
           setErrorMessage(data.message || "Invalid email or password");
         }
-      } catch (error) {
-        console.error("Error during student login:", error);
-        setErrorMessage("An error occurred during login");
+      } else {
+        setErrorMessage("Invalid username or password");
       }
-    } else {
-      setErrorMessage("Invalid username or password");
+    } catch (error) {
+      console.error("Error during login:", error);
+      setErrorMessage("An error occurred during login");
+    } finally {
+      setLoading(false); // Stop loading once login completes
     }
   };
 
@@ -203,8 +192,13 @@ const Login = () => {
           onClick={handleLogin}
           style={{ width: "150%", height: "60px", backgroundColor: "#7FC7D9" }}
           className="mt-4 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          disabled={loading} // Disable button while loading
         >
-          Login
+          {loading ? (
+            <CircularProgress size={24} style={{ color: "white" }} />
+          ) : (
+            "Login"
+          )}
         </button>
         <button
           onClick={handleSignIN}

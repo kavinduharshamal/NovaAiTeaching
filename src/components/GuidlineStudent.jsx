@@ -84,7 +84,6 @@ const GuidelineStudent = ({ role }) => {
           <div>
             <h2
               style={{
-                fontFamily: "Georgia, serif",
                 fontSize: "40px",
                 color: titleColor,
               }}

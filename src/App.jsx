@@ -12,7 +12,7 @@ import { ThemeProvider, CssBaseline, IconButton } from "@mui/material";
 import { lightTheme, darkTheme } from "./theme";
 import { HomePageStudent } from "./pages/HomePageStudent";
 import imageCricle from "../public/texture/human.png";
-import { button } from "leva";
+import { button, Leva } from "leva";
 import "./App.css";
 import { ExperienceLoginPage } from "./components/ExperienceLoginPage";
 import Login from "./components/Login";
@@ -37,6 +37,8 @@ import OnlineReference from "./components/OnlineReference";
 import ModuleDetailsStudents from "./components/ModuleDetailsStudents";
 import GuidelineStudent from "./components/GuidlineStudent";
 import OnlineReferenceStudent from "./components/OnlineReferenceStudent";
+import { UI } from "./components/UI";
+import { ExperienceGpt } from "./components/ExperienceGpt";
 
 function App() {
   const [isFeedbackVisible, setIsFeedbackVisible] = useState(true);
@@ -214,6 +216,15 @@ function App() {
             </IconButton>
             <DashBoardStudent themeMode={themeMode} toggleTheme={toggleTheme} />
           </ThemeProvider>
+        </Route>
+
+        <Route path="/gpt">
+          <Loader />
+          <Leva hidden />
+          <UI />
+          <Canvas shadows camera={{ position: [0, 0, 1], fov: 30 }}>
+            <ExperienceGpt />
+          </Canvas>
         </Route>
 
         <Route path="/GetTopicsByModuleId/:teacherId/:moduleId">

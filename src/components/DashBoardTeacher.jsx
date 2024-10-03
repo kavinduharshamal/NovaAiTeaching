@@ -9,6 +9,7 @@ import ReactionBoard from "./ReactionBoard";
 import ReminderCalendar from "./ReminderCalendar";
 import DashboardModules from "./DashboardModules";
 import Noticeboard from "./Noticeboard";
+import AddModule from "./AddModule";
 
 const DashBoardTeacher = ({ themeMode, toggleTheme }) => {
   const { teacherId } = useParams();
@@ -46,6 +47,7 @@ const DashBoardTeacher = ({ themeMode, toggleTheme }) => {
 
         {/* Reaction Board and Reminder Calendar taking up 1/4 of the screen */}
         <div className="w-1/4 flex-col py-9">
+          <AddModule themeMode={themeMode} />
           <ReactionBoard />
           <div className="h-12"></div>
           <ReminderCalendar themeMode={themeMode} />

@@ -116,7 +116,6 @@ const MenuBar = ({ showScheduleButton, toggleTheme, themeMode, isHome }) => {
       {/* Divider below the MenuBar */}
       <Divider sx={{ borderColor: "#0F4F60", borderWidth: "1px" }} />
       {/* Conditionally show the AddModule component */}
-      {isHome && <AddModule themeMode={themeMode} />}
     </>
   );
 };
