@@ -69,6 +69,11 @@ const MenuBarStudent = ({ showScheduleButton, toggleTheme, themeMode }) => {
     window.location.href = "/dashboard/Student/online_Reference";
   };
 
+  const handleButtonClickEvents = (page) => {
+    console.log(`${page} clicked`);
+    window.location.href = "/dashboard/eventstudent";
+  };
+
   return (
     <>
       <CustomAppBar position="static">
@@ -78,7 +83,7 @@ const MenuBarStudent = ({ showScheduleButton, toggleTheme, themeMode }) => {
             <CustomButton onClick={() => handleButtonClick("Home")}>
               Home
             </CustomButton>
-            <CustomButton onClick={() => handleButtonClick("Events")}>
+            <CustomButton onClick={() => handleButtonClickEvents("Events")}>
               Events
             </CustomButton>
 

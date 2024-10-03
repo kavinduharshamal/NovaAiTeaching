@@ -39,6 +39,8 @@ import GuidelineStudent from "./components/GuidlineStudent";
 import OnlineReferenceStudent from "./components/OnlineReferenceStudent";
 import { UI } from "./components/UI";
 import { ExperienceGpt } from "./components/ExperienceGpt";
+import EventPage from "./components/EventPage";
+import EventPageStudents from "./components/EventPageStudents";
 
 function App() {
   const [isFeedbackVisible, setIsFeedbackVisible] = useState(true);
@@ -147,14 +149,14 @@ function App() {
         <Route path="/dashboard/Student/GuidLines">
           <ThemeProvider theme={currentTheme}>
             <CssBaseline />
-            <GuidelineStudent role={"student"} />
+            <GuidelineStudent role={"student"} themeMode={currentTheme} />
           </ThemeProvider>
         </Route>
 
         <Route path="/dashboard/GuidLines">
           <ThemeProvider theme={currentTheme}>
             <CssBaseline />
-            <Guidline role={"teacher"} />
+            <Guidline role={"teacher"} themeMode={currentTheme} />
           </ThemeProvider>
         </Route>
 
@@ -184,14 +186,28 @@ function App() {
         <Route path="/dashboard/online_Reference">
           <ThemeProvider theme={currentTheme}>
             <CssBaseline />
-            <OnlineReference />
+            <OnlineReference themeMode={currentTheme} />
           </ThemeProvider>
         </Route>
 
         <Route path="/dashboard/Student/online_Reference">
           <ThemeProvider theme={currentTheme}>
             <CssBaseline />
-            <OnlineReferenceStudent />
+            <OnlineReferenceStudent themeMode={currentTheme} />
+          </ThemeProvider>
+        </Route>
+
+        <Route path="/dashboard/event">
+          <ThemeProvider theme={currentTheme}>
+            <CssBaseline />
+            <EventPage currentTheme={currentTheme} />
+          </ThemeProvider>
+        </Route>
+
+        <Route path="/dashboard/eventstudent">
+          <ThemeProvider theme={currentTheme}>
+            <CssBaseline />
+            <EventPageStudents currentTheme={currentTheme} />
           </ThemeProvider>
         </Route>
 
@@ -288,7 +304,7 @@ function App() {
         <Route exact path="/preview">
           <ThemeProvider theme={currentTheme}>
             <div style={canvasStyle}>
-              <PreviewPage themeMode={themeMode} />
+              <PreviewPage themeMode={currentTheme} />
             </div>
           </ThemeProvider>
         </Route>

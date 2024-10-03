@@ -5,8 +5,9 @@ import LogoBar from "./LogoBar";
 import MenuBar from "./MenuBar";
 import MenuBarStudent from "./MenuBarStudent";
 import Cookies from "js-cookie";
+import Footer from "./Footer";
 
-const OnlineReferenceStudent = () => {
+const OnlineReferenceStudent = ({ themeMode }) => {
   const theme = useTheme();
 
   // Dynamic colors based on the current theme
@@ -142,6 +143,7 @@ const OnlineReferenceStudent = () => {
           </div>
         </div>
       </div>
+      <Footer themeMode={themeMode.palette.mode} />
     </>
   );
 };

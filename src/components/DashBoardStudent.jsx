@@ -14,6 +14,8 @@ import ReminderCalendar from "./ReminderCalendar";
 import DashboardModulesStudent from "./DashboardModulesStudent";
 import Noticeboard from "./Noticeboard";
 import MenuBarStudent from "./MenuBarStudent";
+import Footer from "./Footer";
+import ReminderCalendarStudent from "./ReminderCalendarStudent";
 
 const DashBoardStudent = ({ themeMode, toggleTheme }) => {
   const { batchNum } = useParams();
@@ -51,12 +53,13 @@ const DashBoardStudent = ({ themeMode, toggleTheme }) => {
         <div className="w-1/4 flex-col py-9">
           <ReactionBoard />
           <div className="h-12"></div>
-          <ReminderCalendar themeMode={themeMode} />
+          <ReminderCalendarStudent themeMode={themeMode} />
           <div>
             <Noticeboard themeMode={themeMode} />
           </div>
         </div>
       </div>
+      <Footer themeMode={themeMode} />
     </div>
   );
 };

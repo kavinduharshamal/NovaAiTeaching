@@ -5,8 +5,9 @@ import LogoBar from "./LogoBar";
 import MenuBar from "./MenuBar";
 import Cookies from "js-cookie";
 import MenuBarStudent from "./MenuBarStudent";
+import Footer from "./Footer";
 
-const GuidelineStudent = ({ role }) => {
+const GuidelineStudent = ({ role, themeMode }) => {
   const theme = useTheme();
   const [roleText, setRoleText] = useState("");
   const [displayText, setDisplayText] = useState("");
@@ -120,6 +121,7 @@ const GuidelineStudent = ({ role }) => {
           </div>
         </div>
       </div>
+      <Footer themeMode={themeMode.palette.mode} />
     </>
   );
 };

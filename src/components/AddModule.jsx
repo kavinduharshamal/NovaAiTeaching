@@ -142,6 +142,7 @@ function AddModule({ themeMode }) {
           Year: new Date().getFullYear().toString(),
           ModuleCode: "",
         });
+        window.location.reload();
       } else {
         console.error("Failed to save module:", response.statusText);
         alert(`Failed to save module: ${response.statusText}`);

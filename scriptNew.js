@@ -15,7 +15,7 @@ dotenv.config();
 
 const openai = new OpenAI({
   apiKey:
-    "sk-tYrg6PAH8-T5J1kY0oBnraQVv_60NPIdzJzizP1lnST3BlbkFJEQyf3QkoJJ-bwiwRfMxfcxD5RHym8kLRJ00nbmBRAA", // Your OpenAI API key here, I used "-" to avoid errors when the key is not set but you should not do that
+    "sk-cL1QW7PdAhLNrdKQsWhIl5yKXJywMLKAph_Jicb0bkT3BlbkFJ-EDTbgC6EePHY45S27JBjvM-h19EAwdwWe0i4J8fcA", // Your OpenAI API key here, I used "-" to avoid errors when the key is not set but you should not do that
 });
 
 const elevenLabsApiKey = "eff3e54a7313f68f0b718d930621b3e1"; // Your ElevenLabs API key
@@ -394,7 +394,7 @@ app.post("/chat", async (req, res) => {
         role: "system",
         content: `
         You are a virtual girlfriend.
-        You will always reply with a JSON array of messages. With a maximum of 20 messages.
+        You will always reply with a JSON array of messages. With a maximum of 10 messages.
         Each message has a text, facialExpression, and animation property.
         The different facial expressions are: smile, sad, angry, surprised, funnyFace, and default.
         The different animations are: Talking_0, Talking_1, Talking_2, Crying, Laughing, Rumba, Idle, Terrified, and Angry. 

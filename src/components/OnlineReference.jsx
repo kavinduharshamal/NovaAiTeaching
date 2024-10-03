@@ -3,23 +3,25 @@ import { useTheme } from "@mui/material/styles";
 import ProfileBar from "./ProfileBar";
 import LogoBar from "./LogoBar";
 import MenuBar from "./MenuBar";
+import Footer from "./Footer";
 
-const OnlineReference = () => {
+const OnlineReference = ({ themeMode }) => {
   const theme = useTheme();
+  console.log(themeMode);
 
   // Dynamic colors based on the current theme
   const textColor =
-    theme.palette.mode === "light"
-      ? theme.palette.background.paper
-      : theme.palette.text.primary;
+    themeMode.palette.mode === "light"
+      ? themeMode.palette.background.paper
+      : themeMode.palette.text.primary;
 
   const titleColor =
-    theme.palette.mode === "dark"
-      ? theme.palette.text.secondary
-      : theme.palette.background.paper;
+    themeMode.palette.mode === "dark"
+      ? themeMode.palette.text.secondary
+      : themeMode.palette.background.paper;
 
-  const backgroundColor = theme.palette.background.default;
-  const panelBackgroundColor = theme.palette.primary.main;
+  const backgroundColor = themeMode.palette.background.default;
+  const panelBackgroundColor = themeMode.palette.primary.main;
 
   return (
     <>
@@ -31,7 +33,7 @@ const OnlineReference = () => {
           left: 0,
           right: 0,
           zIndex: 1000,
-          backgroundColor: theme.palette.primary.main,
+          backgroundColor: themeMode.palette.primary.main,
         }}
       >
         <ProfileBar teacherId={1} type={"student"} />
@@ -53,7 +55,7 @@ const OnlineReference = () => {
           style={{
             width: "100%",
             overflow: "hidden",
-            background: theme.palette.background.default,
+            background: themeMode.palette.background.default,
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
@@ -65,7 +67,7 @@ const OnlineReference = () => {
               padding: "20px",
               borderRadius: "8px",
               backgroundColor: panelBackgroundColor,
-              boxShadow: theme.shadows[4],
+              boxShadow: themeMode.shadows[4],
               maxWidth: "800px",
               width: "100%",
               textAlign: "left",
@@ -141,6 +143,7 @@ const OnlineReference = () => {
           </div>
         </div>
       </div>
+      <Footer themeMode={themeMode.palette.mode} />
     </>
   );
 };

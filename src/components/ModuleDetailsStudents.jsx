@@ -7,8 +7,9 @@ import MenuBar from "./MenuBar";
 import Cookies from "js-cookie";
 import { useTheme, Typography, Button } from "@mui/material";
 import MenuBarStudent from "./MenuBarStudent";
+import Footer from "./Footer";
 
-export const ModuleDetailsStudents = () => {
+export const ModuleDetailsStudents = ({ themeMode }) => {
   // Define the model inside the component
   class TopicModel {
     constructor(id, moduleId, topicName, url1, batchId) {
@@ -196,6 +197,7 @@ export const ModuleDetailsStudents = () => {
         )}
       </div>
       <div className="p-16"></div>
+      <Footer themeMode={themeMode} />
     </div>
   );
 };

@@ -11,11 +11,13 @@ import {
   Alert,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import Cookies from "js-cookie";
 
 const ReminderButton = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [topic, setTopic] = useState("");
   const [description, setDescription] = useState("");
+  const [date, setDate] = useState(""); // New state for date
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
 
@@ -33,10 +35,10 @@ const ReminderButton = () => {
 
   const handleAdd = async () => {
     const reminder = {
-      teacherId: 1, // Hardcoded teacherId
+      teacherId: Cookies.get("teacherId"),
       eventName: topic,
       description: description,
-      dateAndTime: "2024-10-02T08:00:00", // Hardcoded dateAndTime
+      dateAndTime: `${date}T08:00:00`, // Using selected date with hardcoded time
     };
 
     try {
@@ -52,7 +54,6 @@ const ReminderButton = () => {
       );
 
       if (!response.ok) {
-        // Handle the response error
         const errorMessage = await response.text();
         console.error("Failed to add reminder:", response.status, errorMessage);
         setSnackbarMessage("Failed to add reminder.");
@@ -60,13 +61,14 @@ const ReminderButton = () => {
         return;
       }
 
-      // Handle success
       console.log("Reminder added successfully");
       setSnackbarMessage("Reminder added successfully!");
       setOpenSnackbar(true);
       setTopic(""); // Reset topic input
       setDescription(""); // Reset description input
+      setDate(""); // Reset date input
       handleClose(); // Close the popover
+      window.location.reload();
     } catch (error) {
       console.error("Error adding reminder:", error);
       setSnackbarMessage("Error adding reminder.");
@@ -112,7 +114,7 @@ const ReminderButton = () => {
         PaperProps={{
           sx: {
             width: "350px", // Custom width
-            height: "400px", // Custom height
+            height: "425px", // Custom height
             mt: "-16px", // Small margin to ensure it's above the button
           },
         }}
@@ -142,6 +144,18 @@ const ReminderButton = () => {
             variant="outlined"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
+          />
+          <TextField
+            margin="dense"
+            label="Date"
+            type="date" // Change the type to date
+            fullWidth
+            variant="outlined"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            InputLabelProps={{
+              shrink: true, // Ensures the label stays above the input
+            }}
           />
         </DialogContent>
 

@@ -66,6 +66,11 @@ const MenuBar = ({ showScheduleButton, toggleTheme, themeMode, isHome }) => {
     window.location.href = "/dashboard/GuidLines";
   };
 
+  const handleButtonClickEvents = (page) => {
+    console.log(`${page} clicked`);
+    window.location.href = "/dashboard/event";
+  };
+
   const handleButtonClickOnlineReference = (page) => {
     console.log(`${page} clicked`);
     window.location.href = "/dashboard/online_Reference";
@@ -81,7 +86,7 @@ const MenuBar = ({ showScheduleButton, toggleTheme, themeMode, isHome }) => {
               <CustomButton onClick={() => handleButtonClick("Home")}>
                 Home
               </CustomButton>
-              <CustomButton onClick={() => handleButtonClick("Events")}>
+              <CustomButton onClick={() => handleButtonClickEvents("Events")}>
                 Events
               </CustomButton>
               <CustomButton

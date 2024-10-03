@@ -6,6 +6,7 @@ import LogoBar from "./LogoBar";
 import MenuBar from "./MenuBar";
 import Cookies from "js-cookie";
 import { useTheme, Typography, Button } from "@mui/material";
+import Footer from "./Footer";
 
 export const ModuleDetails = ({ themeMode }) => {
   // Define the model inside the component
@@ -213,6 +214,7 @@ export const ModuleDetails = ({ themeMode }) => {
         )}
       </div>
       <div className="p-16"></div>
+      <Footer themeMode={themeMode} />
     </div>
   );
 };

@@ -11,6 +11,7 @@ import DashboardModules from "./DashboardModules";
 import Noticeboard from "./Noticeboard";
 import AddModule from "./AddModule";
 import QandA from "./QandA";
+import Footer from "./Footer";
 
 const DashBoardTeacher = ({ themeMode, toggleTheme }) => {
   const { teacherId } = useParams();
@@ -58,6 +59,7 @@ const DashBoardTeacher = ({ themeMode, toggleTheme }) => {
           </div>
         </div>
       </div>
+      <Footer themeMode={themeMode} />
     </div>
   );
 };

@@ -28,7 +28,7 @@ export function Avtera(props) {
   const [isPlaying, setIsPlaying] = useState(false);
   const folderName = props.fileName;
   console.log(folderName);
-  const initialTexture = "/texture/9875308.jpg";
+  const initialTexture = "/texture/greenBoard.png";
   const fileMusic = "audio/hi_ranmi_213/1.mp3";
   const viewport = useThree((state) => state.viewport);
 

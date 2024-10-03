@@ -4,13 +4,15 @@ import ProfileBar from "./ProfileBar";
 import LogoBar from "./LogoBar";
 import MenuBar from "./MenuBar";
 import Cookies from "js-cookie";
+import Footer from "./Footer";
 
-const Guideline = ({ role }) => {
+const Guideline = ({ role, themeMode }) => {
   const theme = useTheme();
   const [roleText, setRoleText] = useState("");
   const [displayText, setDisplayText] = useState("");
   const [listItems, setListItems] = useState([]);
   const [teacherId, setTeacherId] = useState(null);
+  console.log(themeMode);
 
   useEffect(() => {
     const fetchedTeacherId = Cookies.get("teacherId");
@@ -119,6 +121,7 @@ const Guideline = ({ role }) => {
           </div>
         </div>
       </div>
+      <Footer themeMode={themeMode.palette.mode} />
     </>
   );
 };

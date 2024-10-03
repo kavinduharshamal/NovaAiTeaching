@@ -14,6 +14,7 @@ import Cookies from "js-cookie";
 import ProfileBar from "./ProfileBar";
 import LogoBar from "./LogoBar";
 import MenuBar from "./MenuBar";
+import Footer from "./Footer";
 
 export const PreviewPage = ({ themeMode }) => {
   const [playAudio, setPlayAudio] = useState(false);
@@ -25,9 +26,10 @@ export const PreviewPage = ({ themeMode }) => {
   console.log(topicName);
 
   // Toggle play/pause state
-  const togglePlay = () => {
+  const togglePlay = ({ themeMode }) => {
     setPlayAudio((prev) => !prev);
   };
+  console.log(themeMode);
 
   // Fetch mp3 and png files
   useEffect(() => {
@@ -187,6 +189,7 @@ export const PreviewPage = ({ themeMode }) => {
           )}
         </div>
       </div>
+      <Footer themeMode={themeMode} />
     </div>
   );
 };

@@ -45,7 +45,7 @@ const AllAddedModules = ({
         }
       } catch (err) {
         console.error("Error fetching modules:", err);
-        setError("Error fetching modules.");
+        setError("No Modules have been added");
       } finally {
         setLoading(false);
       }
