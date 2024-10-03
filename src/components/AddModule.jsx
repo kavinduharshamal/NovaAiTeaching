@@ -17,6 +17,7 @@ import {
   FormControl,
   createTheme,
 } from "@mui/material";
+import Cookies from "js-cookie";
 
 const lightTheme = createTheme({
   palette: {
@@ -61,7 +62,7 @@ const darkTheme = createTheme({
 function AddModule({ themeMode }) {
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [formValues, setFormValues] = useState({
-    TeacherId: "1", // Hard code TeacherId to 1
+    TeacherId: Cookies.get("teacherId"), // Hard code TeacherId to 1
     BatchNumber: "",
     ModuleName: "",
     SemesterNumber: "",
@@ -134,7 +135,7 @@ function AddModule({ themeMode }) {
 
         // Clear the input fields after saving the data
         setFormValues({
-          TeacherId: "1", // Hard code TeacherId to 1
+          TeacherId: Cookies.get("teacherId"),
           BatchNumber: "",
           ModuleName: "",
           SemesterNumber: "",

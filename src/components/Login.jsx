@@ -50,7 +50,9 @@ const Login = () => {
           console.log("Login successful:", data);
           const teacherId = data.id;
           Cookies.set("teacherId", `${teacherId}`, { expires: 7 });
-          window.location.href = `http://localhost:5173/dashboard/Teacher/${teacherId}`;
+          window.location.href = `http://localhost:5173/dashboard/Teacher/${Cookies.get(
+            "teacherId"
+          )}`;
         } else {
           setErrorMessage(data.message || "Invalid email or password");
         }
