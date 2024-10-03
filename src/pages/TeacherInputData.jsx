@@ -33,7 +33,7 @@ import LogoBar from "../components/LogoBar";
 import MenuBar from "../components/MenuBar";
 
 const API_KEY =
-  "sk-cL1QW7PdAhLNrdKQsWhIl5yKXJywMLKAph_Jicb0bkT3BlbkFJ-EDTbgC6EePHY45S27JBjvM-h19EAwdwWe0i4J8fcA";
+  "sk-DtWz4-FxYIvPAdx7HMs75Jqbl3wKcsJwuvILEkrjHNT3BlbkFJRS92ehofi0cg9n3lGPIoanI6vpReD4yjbmhSfVfkcA";
 
 const systemMessage = {
   role: "system",
